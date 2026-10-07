@@ -356,9 +356,11 @@ async function Deliverable({
                           <span className="min-w-0">{c.body}</span>
                         </p>
                       )}
-                      {!c.deleted && (c.authorId === ws.userId || (ws.isTeam && (c.authorIsClient || c.pin))) && (
+                      {!c.deleted && (c.authorId === ws.userId || (ws.isTeam && (c.authorIsClient || c.pin) && (d.status !== "approved" || c.resolvedAt))) && (
                         <div className="mt-1 flex gap-3">
-                          {ws.isTeam && (c.authorIsClient || c.pin) && <ResolveButton slug={slug} commentId={c.id} resolved={!!c.resolvedAt} />}
+                          {ws.isTeam && (c.authorIsClient || c.pin) && (d.status !== "approved" || c.resolvedAt) && (
+                            <ResolveButton slug={slug} commentId={c.id} resolved={!!c.resolvedAt} />
+                          )}
                           {c.authorId === ws.userId && <DeleteCommentButton slug={slug} commentId={c.id} />}
                         </div>
                       )}
@@ -372,7 +374,8 @@ async function Deliverable({
         </div>
 
         <aside className="space-y-6">
-          {ws.isTeam && latest && (
+          {/* Approved work has nothing left to do, unless a checklist was already made for it. */}
+          {ws.isTeam && latest && (d.status !== "approved" || checklist) && (
             <ChecklistCard
               slug={slug}
               deliverableId={d.id}
