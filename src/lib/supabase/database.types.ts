@@ -478,6 +478,94 @@ export type Database = {
           },
         ]
       }
+      stripe_events: {
+        Row: {
+          deliveries: number
+          id: string
+          outcome: string
+          received_at: string
+          stripe_created_at: string
+          summary: string
+          type: string
+          workspace_id: string | null
+        }
+        Insert: {
+          deliveries?: number
+          id: string
+          outcome: string
+          received_at?: string
+          stripe_created_at: string
+          summary?: string
+          type: string
+          workspace_id?: string | null
+        }
+        Update: {
+          deliveries?: number
+          id?: string
+          outcome?: string
+          received_at?: string
+          stripe_created_at?: string
+          summary?: string
+          type?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          current_period_end: string | null
+          plan: Database["public"]["Enums"]["plan_tier"]
+          price_lookup_key: string | null
+          risk_note: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          current_period_end?: string | null
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          price_lookup_key?: string | null
+          risk_note?: string | null
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          current_period_end?: string | null
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          price_lookup_key?: string | null
+          risk_note?: string | null
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspaces: {
         Row: {
           created_at: string
@@ -520,6 +608,31 @@ export type Database = {
     }
     Functions: {
       accept_invitation: { Args: { p_token: string }; Returns: string }
+      apply_stripe_subscription: {
+        Args: {
+          p_cancel_at_period_end: boolean
+          p_customer: string
+          p_event_created: string
+          p_event_id: string
+          p_event_type: string
+          p_lookup_key?: string
+          p_period_end?: string
+          p_plan: Database["public"]["Enums"]["plan_tier"]
+          p_status: string
+          p_subscription: string
+        }
+        Returns: string
+      }
+      flag_stripe_risk: {
+        Args: {
+          p_customer: string
+          p_event_created: string
+          p_event_id: string
+          p_event_type: string
+          p_note: string
+        }
+        Returns: string
+      }
       get_invitation: {
         Args: { p_token: string }
         Returns: {
@@ -530,6 +643,17 @@ export type Database = {
           role: Database["public"]["Enums"]["member_role"]
           workspace_name: string
         }[]
+      }
+      record_stripe_event: {
+        Args: {
+          p_created: string
+          p_event_id: string
+          p_outcome: string
+          p_summary?: string
+          p_type: string
+          p_workspace?: string
+        }
+        Returns: boolean
       }
       request_approval: {
         Args: { p_deliverable: string; p_due_on?: string }

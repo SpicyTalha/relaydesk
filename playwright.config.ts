@@ -1,4 +1,8 @@
+import { existsSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
+
+// Tests talk to Supabase and Stripe directly too, so load the same env files as `next dev`.
+for (const file of [".env.development.local", ".env.local"]) if (existsSync(file)) process.loadEnvFile(file);
 
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 

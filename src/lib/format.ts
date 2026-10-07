@@ -35,8 +35,8 @@ export function dueInfo(dueOn: string | null, now: number): DueInfo | null {
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(0)} KB`;
-  if (bytes < 1024 ** 3) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
-  return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
+  if (bytes < 1024 ** 3) return `${Number((bytes / 1024 ** 2).toFixed(1))} MB`;
+  return `${Number((bytes / 1024 ** 3).toFixed(1))} GB`;
 }
 
 export function firstName(fullName: string): string {
