@@ -297,6 +297,38 @@ export type Database = {
           },
         ]
       }
+      demo_sandboxes: {
+        Row: {
+          created_at: string
+          id: string
+          ip_hash: string
+          user_ids: string[]
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_hash: string
+          user_ids: string[]
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_hash?: string
+          user_ids?: string[]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_sandboxes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           accepted_at: string | null
@@ -622,6 +654,17 @@ export type Database = {
           p_subscription: string
         }
         Returns: string
+      }
+      create_demo_workspace: {
+        Args: {
+          p_client_a: string
+          p_client_b: string
+          p_ip_hash: string
+          p_member: string
+          p_owner: string
+          p_sizes: Json
+        }
+        Returns: Json
       }
       flag_stripe_risk: {
         Args: {

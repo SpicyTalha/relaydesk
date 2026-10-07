@@ -10,6 +10,11 @@ import { LogoMark } from "@/components/brand/logo";
 import { getProfile, getWorkspaceContext } from "@/lib/data/workspace";
 import { ACCENT_SWATCH, getClientSpaces } from "@/lib/data/clients";
 
+// The workspace shell needs the signed-in user (name, role, clients), so entering a workspace
+// may block on it. Navigations *between* pages inside a workspace stay instant: the layout
+// stays mounted and every page streams in behind its own skeleton.
+export const instant = false;
+
 const PLAN_LABEL = { free: "Free plan", pro: "Pro plan", studio: "Studio plan" } as const;
 
 export default function WorkspaceLayout({ children, params }: LayoutProps<"/w/[slug]">) {

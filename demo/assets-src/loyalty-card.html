@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_northwind.css">
+<style>
+  @page { size: 3.5in 2in; margin:0; }
+  .card { width:3.5in; height:2in; padding:.2in .24in; page-break-after:always; position:relative; overflow:hidden; }
+  .front { background:var(--espresso); color:var(--crema); display:flex; flex-direction:column; justify-content:space-between; }
+  .front h1 { font-size:26px; font-weight:800; letter-spacing:-.02em; }
+  .front p { font-size:8.5px; letter-spacing:.25em; opacity:.7; }
+  .front .ring { position:absolute; right:-.4in; top:-.4in; width:1.5in; height:1.5in; border-radius:50%; border:10px solid var(--rust); opacity:.9; }
+  .back { background:var(--cream); color:var(--espresso); }
+  .back h2 { font-size:12px; font-weight:700; }
+  .back small { font-size:8px; opacity:.6; display:block; margin:2px 0 8px; }
+  .stamps { display:grid; grid-template-columns:repeat(5, 1fr); gap:6px var(--gap,10px); }
+  .stamp { width:var(--s,.26in); height:var(--s,.26in); border-radius:50%; border:1.5px dashed rgba(43,29,20,.45); justify-self:center; }
+  .stamp.free { border:none; background:var(--rust); color:#fff; font-size:7px; font-weight:700; display:grid; place-items:center; }
+</style></head><body>
+  <div class="card front"><div class="ring"></div><h1 class="serif">Northwind<br>Coffee</h1><p>LOYALTY CARD · ROASTED ON SITE</p></div>
+  <div class="card back"><h2>Ten coffees, the eleventh is on us.</h2><small>One stamp per drink. Not valid with other offers.</small>
+    <div class="stamps"><div class="stamp"></div><div class="stamp"></div><div class="stamp"></div><div class="stamp"></div><div class="stamp"></div><div class="stamp"></div><div class="stamp"></div><div class="stamp"></div><div class="stamp"></div><div class="stamp free">FREE</div></div>
+  </div>
+</body></html>

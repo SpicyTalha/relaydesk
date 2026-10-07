@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_northwind.css">
+<style>
+  body { width:1600px; height:900px; background:radial-gradient(120% 90% at 20% 10%, #3a281c, var(--espresso) 60%); color:var(--crema); padding:70px 90px; display:grid; grid-template-columns:1fr 1fr; gap:80px; position:relative; overflow:hidden; }
+  header { grid-column:1/-1; display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid rgba(244,231,211,.25); padding-bottom:22px; }
+  .brand { font-size:64px; font-weight:800; letter-spacing:-.02em; }
+  .brand small { display:block; font-family:Inter; font-size:16px; letter-spacing:.35em; font-weight:500; opacity:.7; margin-top:6px; }
+  .season { font-size:22px; color:var(--rust); font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
+  h2 { font-size:30px; font-weight:600; color:#e9b98f; margin-bottom:22px; letter-spacing:.02em; }
+  .item { display:flex; align-items:baseline; gap:14px; margin-bottom:var(--gap,20px); }
+  .item .name { font-size:30px; font-weight:500; }
+  .item .desc { display:block; font-size:16px; opacity:.6; margin-top:4px; font-weight:400; }
+  .dots { flex:1; border-bottom:2px dotted rgba(244,231,211,.3); transform:translateY(-8px); }
+  .price { font-size:var(--price,26px); font-weight:700; color:#fff; font-family:Fraunces, serif; }
+  .special { grid-column:1/-1; background:var(--rust); color:#fff; border-radius:18px; padding:20px 30px; display:none; align-items:center; justify-content:space-between; margin-top:-30px; }
+  .special b { font-family:Fraunces; font-size:34px; }
+  .special span { font-size:18px; opacity:.9; }
+  .bean { position:absolute; width:180px; height:260px; border-radius:50%; background:#3d2a1e; right:-60px; bottom:-90px; transform:rotate(30deg); opacity:.5; }
+  .bean::after { content:""; position:absolute; left:50%; top:8%; height:84%; width:14px; margin-left:-7px; border-radius:50%; background:var(--espresso); }
+</style></head>
+<body class="{{VARIANT}}">
+  <header><div class="brand serif">Northwind Coffee<small>ROASTED ON SITE · SINCE 2014</small></div><div class="season">Spring menu</div></header>
+  <div class="special"><div><b class="serif">Lavender honey latte</b><br><span>Seasonal special · oat milk on request</span></div><b class="serif">$6.25</b></div>
+  <section><h2 class="serif">Espresso bar</h2>
+    <div class="item"><div class="name">Espresso<span class="desc">Double shot, house blend</span></div><div class="dots"></div><div class="price">$3.25</div></div>
+    <div class="item"><div class="name">Flat white<span class="desc">Velvety, 6 oz</span></div><div class="dots"></div><div class="price">$4.50</div></div>
+    <div class="item"><div class="name">Cappuccino<span class="desc">Dry foam, cinnamon dust</span></div><div class="dots"></div><div class="price">$4.75</div></div>
+    <div class="item"><div class="name">Latte<span class="desc">12 oz, any milk</span></div><div class="dots"></div><div class="price">$5.00</div></div>
+    <div class="item"><div class="name">Cortado<span class="desc">Equal parts, no fuss</span></div><div class="dots"></div><div class="price">$4.25</div></div>
+  </section>
+  <section><h2 class="serif">Slow &amp; cold</h2>
+    <div class="item"><div class="name">Pour-over<span class="desc">Single origin, ask us</span></div><div class="dots"></div><div class="price">$5.50</div></div>
+    <div class="item"><div class="name">Cold brew<span class="desc">Steeped 18 hours</span></div><div class="dots"></div><div class="price">$4.75</div></div>
+    <div class="item"><div class="name">Iced oat latte<span class="desc">Our best seller</span></div><div class="dots"></div><div class="price">$5.75</div></div>
+    <div class="item"><div class="name">Chai<span class="desc">House spice mix</span></div><div class="dots"></div><div class="price">$4.50</div></div>
+    <div class="item"><div class="name">Hot chocolate<span class="desc">70% dark, whipped</span></div><div class="dots"></div><div class="price">$4.25</div></div>
+  </section>
+  <div class="bean"></div>
+</body></html>

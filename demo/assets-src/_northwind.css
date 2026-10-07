@@ -1,0 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap");
+:root { --espresso:#2b1d14; --crema:#f4e7d3; --cream:#fbf5ec; --rust:#c2602b; --sage:#7d8b6a; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:Inter, sans-serif; }
+.serif { font-family:Fraunces, serif; }

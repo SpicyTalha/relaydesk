@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_pinecrest.css">
+<style>
+  body { width:1440px; height:900px; background:var(--soft); overflow:hidden; }
+  nav { display:flex; align-items:center; justify-content:space-between; padding:26px 80px; background:#fff; border-bottom:1px solid #dcefeb; }
+  nav ul { display:flex; gap:36px; list-style:none; font-weight:500; color:#3d5a58; }
+  .cta { background:var(--teal); color:#fff; border-radius:999px; padding:12px 22px; font-weight:700; }
+  .hero { display:grid; grid-template-columns:1.1fr 1fr; gap:60px; padding:80px; align-items:center; }
+  h1 { font-size:var(--h1,64px); line-height:1.05; letter-spacing:-.035em; font-weight:800; }
+  .lead { font-size:21px; color:#3d5a58; margin:24px 0 34px; line-height:1.5; max-width:560px; }
+  .row { display:flex; gap:14px; align-items:center; }
+  .ghost { border:2px solid #b9e2db; border-radius:999px; padding:12px 22px; font-weight:700; color:var(--teal); }
+  .proof { margin-top:38px; display:flex; gap:34px; color:#3d5a58; font-weight:600; }
+  .proof b { display:block; font-size:28px; color:var(--ink); }
+  .visual { height:560px; border-radius:36px; background:linear-gradient(160deg, #c8ece5, #8fd6c9); position:relative; overflow:hidden; }
+  .sun { position:absolute; width:300px; height:300px; border-radius:50%; background:#fff6; top:-60px; right:-40px; }
+  .tooth { position:absolute; left:50%; top:52%; transform:translate(-50%,-50%); width:240px; height:280px; background:#fff; border-radius:120px 120px 90px 90px; box-shadow:0 30px 60px rgba(15,118,110,.25); }
+  .tooth::after { content:""; position:absolute; bottom:-60px; left:30px; width:70px; height:120px; background:#fff; border-radius:0 0 40px 40px; box-shadow:110px 0 0 #fff; }
+  .card { position:absolute; left:34px; bottom:34px; background:#fff; border-radius:18px; padding:16px 20px; box-shadow:0 12px 30px rgba(15,42,42,.12); font-weight:700; }
+  .card small { display:block; font-weight:500; color:#3d5a58; margin-top:4px; }
+  .v1 .proof, .v1 .ghost { display:none; }
+  .v1 h1 { --h1:52px; }
+</style></head><body class="{{VARIANT}}">
+  <nav><div class="logo"><i></i>Pinecrest Dental</div><ul><li>Services</li><li>Our team</li><li>New patients</li><li>Insurance</li></ul><div class="cta">Book a visit</div></nav>
+  <section class="hero">
+    <div><h1>Gentle dental care for the whole family.</h1>
+      <p class="lead">Same-week appointments, clear prices before treatment, and a team that explains every step. Most insurance plans accepted.</p>
+      <div class="row"><div class="cta">Book your first visit</div><div class="ghost">See prices</div></div>
+      <div class="proof"><div><b>4.9 ★</b>Patient rating</div><div><b>Same week</b>New patients</div><div><b>Sat</b>Open weekends</div></div>
+    </div>
+    <div class="visual"><div class="sun"></div><div class="tooth"></div><div class="card">Next free slot: Thursday 9:30<small>Cleaning and check-up · 45 min</small></div></div>
+  </section>
+</body></html>

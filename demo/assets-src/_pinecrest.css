@@ -1,0 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+:root { --teal:#0f766e; --teal-2:#14b8a6; --mint:#e6f6f3; --ink:#0f2a2a; --soft:#f5fbfa; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:Manrope, sans-serif; color:var(--ink); }
+.logo { display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.01em; }
+.logo i { width:30px; height:30px; border-radius:9px; background:var(--teal); position:relative; display:inline-block; }
+.logo i::after { content:""; position:absolute; inset:7px 9px; border-radius:6px 6px 10px 10px; background:#fff; }

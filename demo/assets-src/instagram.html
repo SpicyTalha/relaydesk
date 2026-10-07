@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_northwind.css">
+<style>
+  body { width:1080px; height:1080px; background:var(--crema); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; padding:90px; color:var(--espresso); }
+  .tag { font-size:22px; letter-spacing:.3em; font-weight:600; color:var(--rust); }
+  h1 { font-size:132px; line-height:.95; font-weight:800; letter-spacing:-.03em; margin-top:24px; }
+  h1 em { font-style:italic; font-weight:400; color:var(--rust); }
+  .cup { position:absolute; right:-40px; bottom:150px; width:520px; height:520px; border-radius:50%; background:#e9d5b8; box-shadow:inset 0 0 0 34px #fffaf2, 0 30px 60px rgba(43,29,20,.18); }
+  .coffee { position:absolute; inset:60px; border-radius:50%; background:radial-gradient(circle at 50% 50%, #c79a6e 0, #a8703f 55%, #7a4a28 100%); }
+  .heart { position:absolute; left:50%; top:52%; width:170px; height:150px; transform:translate(-50%,-50%); }
+  .heart::before,.heart::after { content:""; position:absolute; width:100px; height:150px; background:#fbefe0; border-radius:100px 100px 0 0; left:85px; transform:rotate(-45deg); transform-origin:0 100%; top:0; }
+  .heart::after { left:-15px; transform:rotate(45deg); transform-origin:100% 100%; }
+  .handle { position:absolute; right:-70px; top:170px; width:120px; height:170px; border:30px solid #fffaf2; border-left:none; border-radius:0 90px 90px 0; }
+  footer { display:flex; justify-content:space-between; align-items:flex-end; font-size:26px; font-weight:500; }
+  footer b { font-family:Fraunces; font-size:40px; }
+</style></head><body>
+  <div><div class="tag">NEW · SPRING MENU</div><h1 class="serif">Spring is<br><em>brewing.</em></h1></div>
+  <div class="cup"><div class="coffee"><div class="heart"></div></div><div class="handle"></div></div>
+  <footer><div>Lavender honey latte<br><span style="opacity:.6">From March 20</span></div><b class="serif">@northwindcoffee</b></footer>
+</body></html>

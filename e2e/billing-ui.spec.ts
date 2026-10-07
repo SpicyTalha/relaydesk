@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { signUp, uniqueEmail } from "./helpers";
 
 test("owner sees plans and usage, and upgrading opens Stripe Checkout in test mode", async ({ page }) => {
+  test.setTimeout(90_000);
   await signUp(page, { name: "Maya Chen", email: uniqueEmail("billing-ui") });
   await page.getByLabel("Agency name").fill("Harbor Studio");
   await page.getByRole("button", { name: "Create workspace" }).click();
@@ -16,5 +17,7 @@ test("owner sees plans and usage, and upgrading opens Stripe Checkout in test mo
   await page.getByRole("button", { name: "Upgrade to Pro" }).click();
   await page.waitForURL(/checkout\.stripe\.com/, { timeout: 30_000 });
   await expect(page.getByText(/Relaydesk Pro/).first()).toBeVisible({ timeout: 30_000 });
+  // The same USD price as the pricing page, not a local-currency conversion.
+  await expect(page.getByText("$29.00").first()).toBeVisible();
   await page.screenshot({ path: "e2e/.screens/21-stripe-checkout.png" });
 });

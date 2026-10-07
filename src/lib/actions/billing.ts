@@ -82,6 +82,8 @@ export async function startCheckout(_prev: FormState, formData: FormData): Promi
       success_url: `${base}/w/${slug}/billing?checkout=success`,
       cancel_url: `${base}/w/${slug}/billing?checkout=canceled`,
       subscription_data: { metadata: { workspace_id: ws.id } },
+      // Show the same USD price as the pricing page instead of converting to local currency.
+      adaptive_pricing: { enabled: false },
       integration_identifier: CHECKOUT_INTEGRATION_ID,
     });
     url = session.url;
