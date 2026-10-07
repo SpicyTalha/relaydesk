@@ -8,7 +8,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(48);
+select plan(50);
 
 -- ---------------------------------------------------------------------------
 -- Fixtures (inserted as postgres, which bypasses RLS)
@@ -113,6 +113,8 @@ select is((select count(*)::int from public.deliverable_versions), 1, 'Nadia see
 select is((select count(*)::int from public.comments), 1, 'Nadia does not see internal comments on drafts');
 select is((select count(*)::int from public.memberships where role = 'client'), 1, 'Nadia sees no other client users');
 select is((select count(*)::int from public.memberships where role <> 'client'), 2, 'Nadia sees the agency team');
+select is((select count(*)::int from public.profiles where id = '00000000-0000-0000-0000-00000000000d'), 0, 'Nadia cannot read the profile of a person at another client');
+select is((select count(*)::int from public.profiles where id = '00000000-0000-0000-0000-00000000000b'), 1, 'Nadia can read the profile of the agency team member');
 select is((select count(*)::int from public.invitations), 0, 'clients see no invitations');
 select throws_ok(
   $$insert into public.deliverables (workspace_id, client_id, title) values ('a0000000-0000-0000-0000-000000000000', 'a1000000-0000-0000-0000-000000000000', 'x')$$,

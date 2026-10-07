@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         <Link href="/" className="w-fit rounded-md focus-visible:ring-3 focus-visible:ring-ring/50 outline-none">
           <Logo />
         </Link>
-        <main className="flex flex-1 items-center justify-center py-10">
+        <main className="flex flex-1 items-start justify-center pt-12 pb-10 sm:items-center sm:pt-10">
           <div className="w-full max-w-sm">{children}</div>
         </main>
         <p className="text-xs text-muted-foreground">
