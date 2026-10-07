@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCw } from "lucide-react";
+import { ArrowClockwiseIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 
 export function ErrorView({ reset, digest }: { reset: () => void; digest?: string }) {
@@ -11,7 +11,7 @@ export function ErrorView({ reset, digest }: { reset: () => void; digest?: strin
         The page didn&apos;t load properly. It&apos;s usually temporary, so try again. Nothing you saved was lost.
       </p>
       <Button onClick={reset}>
-        <RotateCw />
+        <ArrowClockwiseIcon />
         Try again
       </Button>
       {digest && <p className="font-mono text-xs text-muted-foreground">Reference: {digest}</p>}

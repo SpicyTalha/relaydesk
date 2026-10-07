@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Check, FlaskConical, ShieldAlert } from "lucide-react";
+import { CheckIcon, FlaskIcon, ShieldWarningIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,7 +67,7 @@ async function Billing({
       )}
 
       <div className="flex items-start gap-3 rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-        <FlaskConical className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+        <FlaskIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
         <p>
           Payments run in Stripe test mode. Use the card <span className="font-mono text-foreground">4242 4242 4242 4242</span> with any
           future date and any CVC. No real money moves.
@@ -86,7 +86,7 @@ async function Billing({
             </CardTitle>
             {hasSubscription && subscription?.current_period_end && (
               <p className="text-sm text-muted-foreground">
-                {subscription.cancel_at_period_end ? "Ends" : "Renews"} on {shortDate(subscription.current_period_end, now)} · ${current.price}/month
+                {subscription.cancel_at_period_end ? "Ends" : "Renews"} on {shortDate(subscription.current_period_end, now)}, ${current.price} a month
               </p>
             )}
             {!hasSubscription && (
@@ -98,7 +98,7 @@ async function Billing({
           {subscription?.status === "past_due" && (
             <CardContent>
               <p className="flex gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-                <ShieldAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <ShieldWarningIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
                 Your last payment failed. Stripe will retry; update your card in Manage billing to keep {current.name}.
               </p>
             </CardContent>
@@ -117,7 +117,7 @@ async function Billing({
                   <div className="flex justify-between text-sm">
                     <span>{m.label}</span>
                     <span className="text-muted-foreground tabular">
-                      {m.format(m.used)} {m.limit ? `of ${m.format(m.limit)}` : "· unlimited"}
+                      {m.format(m.used)} {m.limit ? `of ${m.format(m.limit)}` : "(unlimited)"}
                     </span>
                   </div>
                   {m.limit !== null && (
@@ -154,7 +154,7 @@ async function Billing({
                   <ul className="space-y-2 text-sm">
                     {p.features.map((f) => (
                       <li key={f} className="flex gap-2">
-                        <Check className="mt-0.5 size-4 shrink-0 text-status-approved" aria-hidden="true" />
+                        <CheckIcon className="mt-0.5 size-4 shrink-0 text-status-approved" aria-hidden="true" />
                         {f}
                       </li>
                     ))}

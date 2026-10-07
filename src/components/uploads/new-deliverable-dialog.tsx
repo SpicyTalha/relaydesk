@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Plus, Sparkles } from "lucide-react";
+import { PlusIcon, SparkleIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -127,7 +127,7 @@ export function NewDeliverableDialog({
     >
       <DialogTrigger asChild>
         <Button>
-          <Plus />
+          <PlusIcon />
           New deliverable
         </Button>
       </DialogTrigger>
@@ -140,7 +140,7 @@ export function NewDeliverableDialog({
 
           {error && (
             <Alert variant={error.upgrade ? "default" : "destructive"}>
-              {error.upgrade && <Sparkles />}
+              {error.upgrade && <SparkleIcon />}
               <AlertDescription>
                 {error.message}{" "}
                 {error.upgrade && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { AlertCircle } from "lucide-react";
+import { WarningCircleIcon } from "@phosphor-icons/react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ export function OnboardingForm() {
     <form action={action} noValidate className="space-y-5">
       {state.error && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <WarningCircleIcon />
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}

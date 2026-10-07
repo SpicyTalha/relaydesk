@@ -1,19 +1,19 @@
 import Link from "next/link";
-import { CheckCircle2, FileUp, MessageSquare, PencilLine, Send, Sparkles, UserPlus, FolderPlus, FilePlus2 } from "lucide-react";
+import { ChatCircleIcon, CheckCircleIcon, FileArrowUpIcon, FilePlusIcon, FolderPlusIcon, PaperPlaneTiltIcon, PencilLineIcon, SparkleIcon, UserPlusIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import type { ActivityItem } from "@/lib/data/activity";
 import { firstName, timeAgo } from "@/lib/format";
 
-const ICON: Record<string, { icon: typeof Send; tone: string }> = {
-  "approval.requested": { icon: Send, tone: "text-status-review bg-status-review/12" },
-  "deliverable.approved": { icon: CheckCircle2, tone: "text-status-approved bg-status-approved/12" },
-  "changes.requested": { icon: PencilLine, tone: "text-status-changes bg-status-changes/14" },
-  "version.uploaded": { icon: FileUp, tone: "text-primary bg-primary/10" },
-  "comment.created": { icon: MessageSquare, tone: "text-muted-foreground bg-muted" },
-  "member.joined": { icon: UserPlus, tone: "text-muted-foreground bg-muted" },
-  "client.created": { icon: FolderPlus, tone: "text-muted-foreground bg-muted" },
-  "deliverable.created": { icon: FilePlus2, tone: "text-muted-foreground bg-muted" },
-  "workspace.created": { icon: Sparkles, tone: "text-primary bg-primary/10" },
+const ICON: Record<string, { icon: typeof PaperPlaneTiltIcon; tone: string }> = {
+  "approval.requested": { icon: PaperPlaneTiltIcon, tone: "text-status-review bg-status-review/12" },
+  "deliverable.approved": { icon: CheckCircleIcon, tone: "text-status-approved bg-status-approved/12" },
+  "changes.requested": { icon: PencilLineIcon, tone: "text-status-changes bg-status-changes/14" },
+  "version.uploaded": { icon: FileArrowUpIcon, tone: "text-primary bg-primary/10" },
+  "comment.created": { icon: ChatCircleIcon, tone: "text-muted-foreground bg-muted" },
+  "member.joined": { icon: UserPlusIcon, tone: "text-muted-foreground bg-muted" },
+  "client.created": { icon: FolderPlusIcon, tone: "text-muted-foreground bg-muted" },
+  "deliverable.created": { icon: FilePlusIcon, tone: "text-muted-foreground bg-muted" },
+  "workspace.created": { icon: SparkleIcon, tone: "text-primary bg-primary/10" },
 };
 
 function describe(a: ActivityItem): React.ReactNode {
@@ -71,8 +71,8 @@ export function ActivityFeed({
               {typeof a.metadata.note === "string" && a.metadata.note && (
                 <span className="mt-1 line-clamp-2 block border-l-2 pl-2 text-[13px] italic">&ldquo;{a.metadata.note}&rdquo;</span>
               )}
-              <span className="mt-0.5 block text-xs">
-                {showClient && a.clientName ? `${a.clientName} · ` : ""}
+              <span className="mt-0.5 flex flex-wrap gap-x-2 text-xs">
+                {showClient && a.clientName && <span>{a.clientName}</span>}
                 <time dateTime={a.createdAt}>{timeAgo(a.createdAt, now)}</time>
               </span>
             </span>

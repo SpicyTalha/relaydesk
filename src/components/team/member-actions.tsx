@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { DotsThreeIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,7 +39,7 @@ export function MemberActions({ slug, membershipId, name, role }: { slug: string
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon-sm" aria-label={`Actions for ${name}`} disabled={pending}>
-            <MoreHorizontal />
+            <DotsThreeIcon />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

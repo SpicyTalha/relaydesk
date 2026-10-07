@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
-import { AlertCircle, MailCheck } from "lucide-react";
+import { EnvelopeOpenIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ export function SignupForm() {
   if (state.success) {
     return (
       <Alert>
-        <MailCheck />
+        <EnvelopeOpenIcon />
         <AlertTitle>Check your inbox</AlertTitle>
         <AlertDescription>{state.success}</AlertDescription>
       </Alert>
@@ -35,7 +35,7 @@ export function SignupForm() {
         <input type="hidden" name="next" value={next} />
         {state.error && (
           <Alert variant="destructive">
-            <AlertCircle />
+            <WarningCircleIcon />
             <AlertDescription>{state.error}</AlertDescription>
           </Alert>
         )}

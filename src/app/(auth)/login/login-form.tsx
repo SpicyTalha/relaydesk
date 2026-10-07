@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
-import { AlertCircle } from "lucide-react";
+import { WarningCircleIcon } from "@phosphor-icons/react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ export function LoginForm() {
         <input type="hidden" name="next" value={next} />
         {error && (
           <Alert variant="destructive">
-            <AlertCircle />
+            <WarningCircleIcon />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}

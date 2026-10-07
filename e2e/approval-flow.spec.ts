@@ -107,7 +107,10 @@ test("full approval loop: agency sends work, client requests changes on a phone,
   await client.getByRole("button", { name: "Approve" }).click();
   await client.getByRole("alertdialog").getByRole("button", { name: "Approve" }).click();
   await expectToast(client, /Approved/);
-  await expect(client.getByText("Approved").first()).toBeVisible();
+  // The stamp lands on the approved version, and the status flips.
+  await expect(client.getByRole("img", { name: "Approved" })).toBeVisible();
+  await expect(client.locator("span").filter({ hasText: /^Approved$/ }).first()).toBeVisible();
+  await client.waitForTimeout(900); // let the stamp settle for the screenshot
   await client.screenshot({ path: `${SHOTS}/10-client-approved.png`, fullPage: true });
 
   // --- Agency: the history shows the whole story ------------------------------------

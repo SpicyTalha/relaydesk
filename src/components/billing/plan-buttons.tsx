@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, CreditCard, ExternalLink } from "lucide-react";
+import { ArrowSquareOutIcon, CheckCircleIcon, CreditCardIcon } from "@phosphor-icons/react";
 import { SubmitButton } from "@/components/submit-button";
 import { Spinner } from "@/components/ui/spinner";
 import { initialFormState } from "@/lib/form-state";
@@ -28,9 +28,9 @@ export function ManageBillingButton({ slug }: { slug: string }) {
     <form action={action} className="space-y-2">
       <input type="hidden" name="slug" value={slug} />
       <SubmitButton variant="outline" pendingText="Opening billing">
-        <CreditCard />
+        <CreditCardIcon />
         Manage billing
-        <ExternalLink className="opacity-60" />
+        <ArrowSquareOutIcon className="opacity-60" />
       </SubmitButton>
       {state.error && <p className="text-sm text-destructive">{state.error}</p>}
     </form>
@@ -63,7 +63,7 @@ export function ConfirmingPlan({ confirmed, planName }: { confirmed: boolean; pl
   if (confirmed) {
     return (
       <div role="status" className="flex items-center gap-3 rounded-xl border border-status-approved/30 bg-status-approved/10 p-4 text-sm">
-        <CheckCircle2 className="size-5 text-status-approved" aria-hidden="true" />
+        <CheckCircleIcon className="size-5 text-status-approved" aria-hidden="true" />
         <span>
           Payment confirmed. You&apos;re on <span className="font-semibold">{planName}</span>.
         </span>

@@ -1,14 +1,14 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { FileIcon, FileText, Film, ImageIcon, UploadCloud, X } from "lucide-react";
+import { CloudArrowUpIcon, FileIcon, FileTextIcon, FilmStripIcon, ImageIcon, XIcon } from "@phosphor-icons/react";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { ACCEPT_ATTRIBUTE, ALLOWED_MIME_TYPES, maxUploadBytes, previewKind } from "@/lib/uploads";
 import { fileMimeType } from "@/lib/upload-client";
 import { formatBytes } from "@/lib/format";
 
-const KIND_ICON = { image: ImageIcon, pdf: FileText, video: Film, file: FileIcon } as const;
+const KIND_ICON = { image: ImageIcon, pdf: FileTextIcon, video: FilmStripIcon, file: FileIcon } as const;
 
 export function Dropzone({
   file,
@@ -63,7 +63,7 @@ export function Dropzone({
           }}
           aria-label="Remove file"
         >
-          <X />
+          <XIcon />
         </Button>
       </div>
     );
@@ -89,7 +89,7 @@ export function Dropzone({
           disabled && "pointer-events-none opacity-60",
         )}
       >
-        <UploadCloud className={cn("size-7", dragging ? "text-primary" : "text-muted-foreground")} aria-hidden="true" />
+        <CloudArrowUpIcon className={cn("size-7", dragging ? "text-primary" : "text-muted-foreground")} aria-hidden="true" />
         <span className="text-sm font-medium">
           Drop a file here, or <span className="text-primary">browse</span>
         </span>

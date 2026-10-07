@@ -1,4 +1,4 @@
-import { Download, FileIcon } from "lucide-react";
+import { DownloadSimpleIcon, FileIcon } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { formatBytes } from "@/lib/format";
 import { previewKind } from "@/lib/uploads";
@@ -57,12 +57,12 @@ export function FilePreview({
       )}
       <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
         <span className="min-w-0 truncate">
-          {fileName} · <span className="tabular">{formatBytes(sizeBytes)}</span>
+          {fileName} <span className="ml-1.5 tabular opacity-75">{formatBytes(sizeBytes)}</span>
         </span>
         {downloadUrl && (
           <Button variant="ghost" size="sm" asChild>
             <a href={downloadUrl} download={fileName}>
-              <Download />
+              <DownloadSimpleIcon />
               Download
             </a>
           </Button>

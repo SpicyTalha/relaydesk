@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Check, Copy, Link2, Sparkles, UserPlus } from "lucide-react";
+import { CheckIcon, CopyIcon, LinkSimpleIcon, SparkleIcon, UserPlusIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -85,7 +85,7 @@ export function InviteDialog({
     >
       <DialogTrigger asChild>
         <Button>
-          <UserPlus />
+          <UserPlusIcon />
           Invite
         </Button>
       </DialogTrigger>
@@ -99,10 +99,10 @@ export function InviteDialog({
               </DialogDescription>
             </DialogHeader>
             <div className="flex items-center gap-2 rounded-lg border bg-muted/40 p-2 pl-3">
-              <Link2 className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <LinkSimpleIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
               <code className="min-w-0 flex-1 truncate font-mono text-xs">{result.link}</code>
               <Button size="sm" variant="outline" onClick={copy}>
-                {copied ? <Check /> : <Copy />}
+                {copied ? <CheckIcon /> : <CopyIcon />}
                 {copied ? "Copied" : "Copy"}
               </Button>
             </div>
@@ -128,7 +128,7 @@ export function InviteDialog({
             </DialogHeader>
             {error && (
               <Alert variant={error.upgrade ? "default" : "destructive"}>
-                {error.upgrade && <Sparkles />}
+                {error.upgrade && <SparkleIcon />}
                 <AlertDescription>
                   {error.message}{" "}
                   {error.upgrade && (

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Inbox, UserPlus } from "lucide-react";
+import { CheckCircleIcon, TrayIcon, UserPlusIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,14 +69,14 @@ async function ClientSpace({ params }: { params: Promise<{ slug: string; clientI
             {client.name}
           </span>
         }
-        description={`${deliverables.length} ${deliverables.length === 1 ? "deliverable" : "deliverables"} · ${clientPeople.length} ${
+        description={`${deliverables.length} ${deliverables.length === 1 ? "deliverable" : "deliverables"}, ${clientPeople.length} ${
           clientPeople.length === 1 ? "person" : "people"
         } from ${client.name} with access`}
         actions={
           <>
             <Button variant="outline" asChild>
               <Link href={`/w/${slug}/team?invite=client&client=${client.id}`}>
-                <UserPlus />
+                <UserPlusIcon />
                 Invite client
               </Link>
             </Button>
@@ -90,7 +90,7 @@ async function ClientSpace({ params }: { params: Promise<{ slug: string; clientI
           <Empty className="rounded-xl border border-dashed bg-card py-14">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <Inbox />
+                <TrayIcon />
               </EmptyMedia>
               <EmptyTitle>No deliverables yet</EmptyTitle>
               <EmptyDescription>
@@ -211,7 +211,7 @@ function ClientPortal({
           </Card>
         ) : (
           <div className="flex items-center gap-3 rounded-xl border border-dashed p-5 text-sm text-muted-foreground">
-            <CheckCircle2 className="size-5 text-status-approved" aria-hidden="true" />
+            <CheckCircleIcon className="size-5 text-status-approved" aria-hidden="true" />
             Nothing needs your review right now. New work will show up here.
           </div>
         )}

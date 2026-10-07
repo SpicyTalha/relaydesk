@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { MoreHorizontal, Pencil, Send, Trash2, Upload } from "lucide-react";
+import { DotsThreeIcon, PaperPlaneTiltIcon, PencilSimpleIcon, TrashIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -131,28 +131,28 @@ export function TeamActions(props: {
       <div className="flex flex-wrap gap-2">
         {canAsk && (
           <Button onClick={() => setDialog("ask")}>
-            <Send />
+            <PaperPlaneTiltIcon />
             Ask for approval
           </Button>
         )}
         <Button variant={canAsk ? "outline" : "default"} onClick={() => setDialog("upload")}>
-          <Upload />
+          <UploadSimpleIcon />
           {hasVersions ? `Upload v${props.nextVersion}` : "Upload file"}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" aria-label="More actions">
-              <MoreHorizontal />
+              <DotsThreeIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onSelect={() => setDialog("edit")}>
-              <Pencil />
+              <PencilSimpleIcon />
               Edit details
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onSelect={() => setDialog("delete")}>
-              <Trash2 />
+              <TrashIcon />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

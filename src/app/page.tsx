@@ -1,19 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Check,
-  CreditCard,
-  Database,
-  FolderLock,
-  History,
-  Layers,
-  Link2,
-  ShieldCheck,
-  Smartphone,
-  TestTube2,
-  Webhook,
-} from "lucide-react";
+import { ArrowRightIcon, CheckIcon, ClockCounterClockwiseIcon, CreditCardIcon, DatabaseIcon, DeviceMobileIcon, FolderLockIcon, LinkSimpleIcon, ShieldCheckIcon, StackIcon, TestTubeIcon, WebhooksLogoIcon } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/brand/logo";
 import { DemoButtons } from "@/components/marketing/demo-buttons";
@@ -25,19 +12,19 @@ import deliverable from "../../public/screens/agency-deliverable.png";
 const REPO = "https://github.com/SpicyTalha/relaydesk";
 
 const FEATURES = [
-  { icon: FolderLock, title: "A private space for every client", body: "Each client sees their own work and nothing else. Not other clients, not your drafts, not your internal notes." },
-  { icon: Layers, title: "Versions that never get lost", body: "Upload v2, v3, v4. Every earlier version stays one click away, with a note on what changed." },
-  { icon: Smartphone, title: "Approve from a phone", body: "Clients open the link, look, and tap Approve or Request changes. No app, no learning curve." },
-  { icon: History, title: "A record you can point to", body: "Who approved which version, and when. The written answer to “but you said it was fine”." },
-  { icon: Link2, title: "Invites that can't be forwarded", body: "One-time links tied to one email address. Forwarded or reused links simply don't work." },
-  { icon: CreditCard, title: "Plans and billing built in", body: "Free, Pro and Studio plans with Stripe Checkout and a self-service billing portal." },
+  { icon: FolderLockIcon, title: "A private space for every client", body: "Each client sees their own work and nothing else. Not other clients, not your drafts, not your internal notes." },
+  { icon: StackIcon, title: "Versions that never get lost", body: "Upload v2, v3, v4. Every earlier version stays one click away, with a note on what changed." },
+  { icon: DeviceMobileIcon, title: "Approve from a phone", body: "Clients open the link, look, and tap Approve or Request changes. No app, no learning curve." },
+  { icon: ClockCounterClockwiseIcon, title: "A record you can point to", body: "Who approved which version, and when. The written answer to “but you said it was fine”." },
+  { icon: LinkSimpleIcon, title: "Invites that can't be forwarded", body: "One-time links tied to one email address. Forwarded or reused links simply don't work." },
+  { icon: CreditCardIcon, title: "Plans and billing built in", body: "Free, Pro and Studio plans with Stripe Checkout and a self-service billing portal." },
 ];
 
 const UNDER_THE_HOOD = [
-  { icon: ShieldCheck, title: "Row Level Security on every table", body: "Tenant isolation lives in the database. 60+ pgTAP tests try to read across agencies and clients, and fail." },
-  { icon: Webhook, title: "Payments that can't double-apply", body: "Stripe webhooks are signature-checked, re-fetched from Stripe, and deduplicated in the same transaction as the change." },
-  { icon: Database, title: "Plan limits enforced in Postgres", body: "Client, seat and storage limits are checked by the database, so no browser trick can skip them." },
-  { icon: TestTube2, title: "Tested like a product", body: "Playwright runs the whole loop: agency uploads, client requests changes on a phone, agency revises, client approves." },
+  { icon: ShieldCheckIcon, title: "Row Level Security on every table", body: "Tenant isolation lives in the database. 60+ pgTAP tests try to read across agencies and clients, and fail." },
+  { icon: WebhooksLogoIcon, title: "Payments that can't double-apply", body: "Stripe webhooks are signature-checked, re-fetched from Stripe, and deduplicated in the same transaction as the change." },
+  { icon: DatabaseIcon, title: "Plan limits enforced in Postgres", body: "Client, seat and storage limits are checked by the database, so no browser trick can skip them." },
+  { icon: TestTubeIcon, title: "Tested like a product", body: "Playwright runs the whole loop: agency uploads, client requests changes on a phone, agency revises, client approves." },
 ];
 
 export default function LandingPage() {
@@ -131,7 +118,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm">
                 {["Comments attached to the version they're about", "Change requests always come with a note", "Approval is final for that version, with a timestamp"].map((t) => (
                   <li key={t} className="flex gap-2">
-                    <Check className="mt-0.5 size-4 shrink-0 text-status-approved" aria-hidden="true" />
+                    <CheckIcon className="mt-0.5 size-4 shrink-0 text-status-approved" aria-hidden="true" />
                     {t}
                   </li>
                 ))}
@@ -164,7 +151,7 @@ export default function LandingPage() {
                 <ul className="mt-5 flex-1 space-y-2 text-sm">
                   {p.features.map((f) => (
                     <li key={f} className="flex gap-2">
-                      <Check className="mt-0.5 size-4 shrink-0 text-status-approved" aria-hidden="true" />
+                      <CheckIcon className="mt-0.5 size-4 shrink-0 text-status-approved" aria-hidden="true" />
                       {f}
                     </li>
                   ))}
@@ -200,7 +187,7 @@ export default function LandingPage() {
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-background/70">
               <span>Next.js 16 · TypeScript · Supabase (Postgres, Auth, Storage) · Stripe · Tailwind · Vercel</span>
               <a href={REPO} className="inline-flex items-center gap-1 font-medium text-background underline-offset-4 hover:underline">
-                Read the code and the blueprint <ArrowRight className="size-4" aria-hidden="true" />
+                Read the code and the blueprint <ArrowRightIcon className="size-4" aria-hidden="true" />
               </a>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { LayoutGrid, LogOut, Monitor, Moon, Sun } from "lucide-react";
+import { MonitorIcon, MoonIcon, SignOutIcon, SquaresFourIcon, SunIcon } from "@phosphor-icons/react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -39,7 +39,7 @@ export function UserMenu({ name, email, align = "end" }: { name: string; email: 
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link href="/w?pick=1">
-              <LayoutGrid />
+              <SquaresFourIcon />
               All workspaces
             </Link>
           </DropdownMenuItem>
@@ -48,15 +48,15 @@ export function UserMenu({ name, email, align = "end" }: { name: string; email: 
         <DropdownMenuLabel className="text-xs text-muted-foreground">Theme</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
           <DropdownMenuRadioItem value="light">
-            <Sun />
+            <SunIcon />
             Light
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="dark">
-            <Moon />
+            <MoonIcon />
             Dark
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="system">
-            <Monitor />
+            <MonitorIcon />
             System
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
@@ -64,7 +64,7 @@ export function UserMenu({ name, email, align = "end" }: { name: string; email: 
         <form action={signOut}>
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full">
-              <LogOut />
+              <SignOutIcon />
               Sign out
             </button>
           </DropdownMenuItem>

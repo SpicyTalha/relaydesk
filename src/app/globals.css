@@ -6,9 +6,10 @@
 
 @theme inline {
   /* Literal family names: @theme inline resolves at parse time, so runtime font variables would resolve to nothing. */
-  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
-  --font-heading: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Funnel Sans", "Funnel Sans Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Funnel Display", "Funnel Display Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Funnel Display", "Funnel Display Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -42,6 +43,10 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* The single brand accent (docs/BRAND.md). Rationed: mark, focus, selection, key highlights. */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+
   /* Deliverable status colors. One meaning each, used everywhere a status appears. */
   --color-status-draft: var(--status-draft);
   --color-status-review: var(--status-review);
@@ -57,94 +62,98 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Light theme: the default. Clients open Relaydesk from email links, often on a phone in daylight. */
+/* Light theme: the default. Cool paper and ink; clients open links on phones in daylight. */
 :root {
   --radius: 0.625rem;
 
-  --background: oklch(0.985 0.002 264);
-  --foreground: oklch(0.2 0.015 264);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.015 264);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.015 264);
+  --background: #f4f5f7;
+  --foreground: #15171a;
+  --card: #ffffff;
+  --card-foreground: #15171a;
+  --popover: #ffffff;
+  --popover-foreground: #15171a;
 
-  /* One accent: "relay" indigo. */
-  --primary: oklch(0.5 0.2 272);
-  --primary-foreground: oklch(0.99 0.005 272);
+  /* Primary actions are ink. The magenta brand accent is rationed, see --brand. */
+  --primary: #15171a;
+  --primary-foreground: #ffffff;
+  --brand: #d12d7f;
+  --brand-foreground: #ffffff;
 
-  --secondary: oklch(0.96 0.006 264);
-  --secondary-foreground: oklch(0.25 0.015 264);
-  --muted: oklch(0.965 0.005 264);
-  --muted-foreground: oklch(0.5 0.015 264);
-  --accent: oklch(0.955 0.012 272);
-  --accent-foreground: oklch(0.3 0.08 272);
-  --destructive: oklch(0.56 0.21 25);
-  --border: oklch(0.915 0.006 264);
-  --input: oklch(0.89 0.008 264);
-  --ring: oklch(0.5 0.2 272 / 60%);
+  --secondary: #ebedf0;
+  --secondary-foreground: #15171a;
+  --muted: #eceef1;
+  --muted-foreground: #5b616b;
+  --accent: #eceef1;
+  --accent-foreground: #15171a;
+  --destructive: #c2362c;
+  --border: #e3e5ea;
+  --input: #d5d8de;
+  --ring: #d12d7f;
 
-  --status-draft: oklch(0.55 0.015 264);
-  --status-review: oklch(0.55 0.17 245);
-  --status-changes: oklch(0.62 0.15 60);
-  --status-approved: oklch(0.56 0.14 155);
+  --status-draft: #6b717b;
+  --status-review: #2f6feb;
+  --status-changes: #b56d06;
+  --status-approved: #1f8f55;
 
-  --chart-1: oklch(0.5 0.2 272);
-  --chart-2: oklch(0.56 0.14 155);
-  --chart-3: oklch(0.62 0.15 60);
-  --chart-4: oklch(0.55 0.17 245);
-  --chart-5: oklch(0.6 0.18 330);
+  --chart-1: #15171a;
+  --chart-2: #1f8f55;
+  --chart-3: #b56d06;
+  --chart-4: #2f6feb;
+  --chart-5: #d12d7f;
 
-  --sidebar: oklch(0.975 0.003 264);
-  --sidebar-foreground: oklch(0.25 0.015 264);
-  --sidebar-primary: oklch(0.5 0.2 272);
-  --sidebar-primary-foreground: oklch(0.99 0.005 272);
-  --sidebar-accent: oklch(0.94 0.008 264);
-  --sidebar-accent-foreground: oklch(0.2 0.015 264);
-  --sidebar-border: oklch(0.915 0.006 264);
-  --sidebar-ring: oklch(0.5 0.2 272 / 60%);
+  --sidebar: #eef0f3;
+  --sidebar-foreground: #15171a;
+  --sidebar-primary: #15171a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e3e6ea;
+  --sidebar-accent-foreground: #15171a;
+  --sidebar-border: #e0e3e8;
+  --sidebar-ring: #d12d7f;
 }
 
 .dark {
-  --background: oklch(0.16 0.01 264);
-  --foreground: oklch(0.96 0.004 264);
-  --card: oklch(0.2 0.012 264);
-  --card-foreground: oklch(0.96 0.004 264);
-  --popover: oklch(0.21 0.012 264);
-  --popover-foreground: oklch(0.96 0.004 264);
+  --background: #0e0f11;
+  --foreground: #eceef1;
+  --card: #16181b;
+  --card-foreground: #eceef1;
+  --popover: #1a1c20;
+  --popover-foreground: #eceef1;
 
-  --primary: oklch(0.68 0.16 272);
-  --primary-foreground: oklch(0.16 0.02 272);
+  --primary: #eceef1;
+  --primary-foreground: #15171a;
+  --brand: #e5579e;
+  --brand-foreground: #15171a;
 
-  --secondary: oklch(0.26 0.012 264);
-  --secondary-foreground: oklch(0.94 0.004 264);
-  --muted: oklch(0.25 0.012 264);
-  --muted-foreground: oklch(0.7 0.012 264);
-  --accent: oklch(0.27 0.03 272);
-  --accent-foreground: oklch(0.92 0.03 272);
-  --destructive: oklch(0.68 0.18 22);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.68 0.16 272 / 60%);
+  --secondary: #202328;
+  --secondary-foreground: #eceef1;
+  --muted: #1d2024;
+  --muted-foreground: #9aa0aa;
+  --accent: #22252a;
+  --accent-foreground: #eceef1;
+  --destructive: #ef6a5f;
+  --border: rgb(255 255 255 / 8%);
+  --input: rgb(255 255 255 / 14%);
+  --ring: #e5579e;
 
-  --status-draft: oklch(0.7 0.012 264);
-  --status-review: oklch(0.72 0.13 245);
-  --status-changes: oklch(0.78 0.13 70);
-  --status-approved: oklch(0.74 0.14 155);
+  --status-draft: #9aa0aa;
+  --status-review: #7aa2ff;
+  --status-changes: #e8a845;
+  --status-approved: #4cc384;
 
-  --chart-1: oklch(0.68 0.16 272);
-  --chart-2: oklch(0.74 0.14 155);
-  --chart-3: oklch(0.78 0.13 70);
-  --chart-4: oklch(0.72 0.13 245);
-  --chart-5: oklch(0.72 0.15 330);
+  --chart-1: #eceef1;
+  --chart-2: #4cc384;
+  --chart-3: #e8a845;
+  --chart-4: #7aa2ff;
+  --chart-5: #e5579e;
 
-  --sidebar: oklch(0.18 0.011 264);
-  --sidebar-foreground: oklch(0.94 0.004 264);
-  --sidebar-primary: oklch(0.68 0.16 272);
-  --sidebar-primary-foreground: oklch(0.16 0.02 272);
-  --sidebar-accent: oklch(0.25 0.012 264);
-  --sidebar-accent-foreground: oklch(0.96 0.004 264);
-  --sidebar-border: oklch(1 0 0 / 9%);
-  --sidebar-ring: oklch(0.68 0.16 272 / 60%);
+  --sidebar: #121316;
+  --sidebar-foreground: #eceef1;
+  --sidebar-primary: #eceef1;
+  --sidebar-primary-foreground: #15171a;
+  --sidebar-accent: #1d2024;
+  --sidebar-accent-foreground: #eceef1;
+  --sidebar-border: rgb(255 255 255 / 7%);
+  --sidebar-ring: #e5579e;
 }
 
 @layer base {
@@ -157,7 +166,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--brand) 22%, transparent);
   }
   /* Tabular figures wherever numbers line up: dates, counts, prices, versions. */
   .tabular {

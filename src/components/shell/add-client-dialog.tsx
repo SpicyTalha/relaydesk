@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { Plus, Sparkles } from "lucide-react";
+import { PlusIcon, SparkleIcon } from "@phosphor-icons/react";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,7 +41,7 @@ export function AddClientDialog({ slug, trigger }: { slug: string; trigger?: Rea
       <DialogTrigger asChild>
         {trigger ?? (
           <Button size="sm">
-            <Plus />
+            <PlusIcon />
             Add client
           </Button>
         )}
@@ -55,7 +55,7 @@ export function AddClientDialog({ slug, trigger }: { slug: string; trigger?: Rea
           </DialogHeader>
           {state.error && (
             <Alert variant={state.upgrade ? "default" : "destructive"}>
-              {state.upgrade && <Sparkles />}
+              {state.upgrade && <SparkleIcon />}
               <AlertDescription>
                 {state.error}{" "}
                 {state.upgrade && (

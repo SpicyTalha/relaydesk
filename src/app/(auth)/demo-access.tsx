@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Building2, UserRound } from "lucide-react";
+import { BuildingsIcon, UserIcon } from "@phosphor-icons/react";
 import { FieldSeparator } from "@/components/ui/field";
 import { SubmitButton } from "@/components/submit-button";
 import { initialFormState } from "@/lib/form-state";
@@ -17,11 +17,11 @@ export function DemoAccess({ next }: { next?: string }) {
       <FieldSeparator>or explore the demo</FieldSeparator>
       <form action={action} className="grid grid-cols-2 gap-2">
         <SubmitButton variant="outline" name="as" value="owner" pendingText="Preparing">
-          <Building2 />
+          <BuildingsIcon />
           As the agency
         </SubmitButton>
         <SubmitButton variant="outline" name="as" value="client" pendingText="Preparing">
-          <UserRound />
+          <UserIcon />
           As a client
         </SubmitButton>
       </form>

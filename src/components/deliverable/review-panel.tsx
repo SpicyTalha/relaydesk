@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, PencilLine } from "lucide-react";
+import { CheckIcon, PencilLineIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,7 +72,7 @@ export function ReviewPanel({
       <Dialog open={changesOpen} onOpenChange={(o) => !pending && setChangesOpen(o)}>
         <DialogTrigger asChild>
           <Button variant="outline" size="lg" disabled={pending}>
-            <PencilLine />
+            <PencilLineIcon />
             Request changes
           </Button>
         </DialogTrigger>
@@ -117,7 +117,7 @@ export function ReviewPanel({
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button size="lg" disabled={pending} className="bg-status-approved text-white hover:bg-status-approved/90">
-            <Check />
+            <CheckIcon />
             Approve
           </Button>
         </AlertDialogTrigger>

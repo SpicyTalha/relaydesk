@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
-import { Clock, LinkIcon, UserRound } from "lucide-react";
+import { ClockIcon, LinkSimpleIcon, UserIcon } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/server";
@@ -28,7 +28,7 @@ async function Invite({ params }: { params: Promise<{ token: string }> }) {
 
   if (!invite) {
     return (
-      <Message icon={LinkIcon} title="This invitation isn't valid">
+      <Message icon={LinkSimpleIcon} title="This invitation isn't valid">
         It may have been used already or revoked. Ask the person who invited you for a new link.
         <Button variant="outline" className="mt-6 w-full" asChild>
           <Link href="/login">Go to sign in</Link>
@@ -39,7 +39,7 @@ async function Invite({ params }: { params: Promise<{ token: string }> }) {
 
   if (invite.expired) {
     return (
-      <Message icon={Clock} title="This invitation has expired">
+      <Message icon={ClockIcon} title="This invitation has expired">
         Invitation links work for 7 days. Ask {invite.inviter_name} at {invite.workspace_name} to send a new one.
       </Message>
     );
@@ -76,7 +76,7 @@ async function Invite({ params }: { params: Promise<{ token: string }> }) {
       {user && user.email.toLowerCase() !== invite.email && (
         <div className="space-y-4 rounded-xl border p-4">
           <div className="flex gap-3 text-sm">
-            <UserRound className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <UserIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
             <p>
               You&apos;re signed in as <span className="font-medium">{user.email}</span>. Sign out, then open this link again and sign in as{" "}
               <span className="font-medium">{invite.email}</span>.
@@ -95,7 +95,7 @@ async function Invite({ params }: { params: Promise<{ token: string }> }) {
   );
 }
 
-function Message({ icon: Icon, title, children }: { icon: typeof Clock; title: string; children: React.ReactNode }) {
+function Message({ icon: Icon, title, children }: { icon: typeof ClockIcon; title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-3">
       <span className="grid size-10 place-items-center rounded-full bg-muted text-muted-foreground">

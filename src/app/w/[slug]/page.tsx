@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { AlertTriangle, CheckCircle2, Clock, FolderPlus, PencilLine, Send, Upload, UserPlus } from "lucide-react";
+import { CheckCircleIcon, ClockIcon, FolderPlusIcon, PaperPlaneTiltIcon, PencilLineIcon, UploadSimpleIcon, UserPlusIcon, WarningIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,10 +47,10 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
   const overdue = waiting.filter((d) => dueInfo(d.dueOn, now)?.tone === "overdue");
 
   const stats = [
-    { label: "Waiting on clients", value: waiting.length, icon: Clock, tone: "text-status-review" },
-    { label: "Overdue", value: overdue.length, icon: AlertTriangle, tone: overdue.length ? "text-destructive" : "text-muted-foreground" },
-    { label: "Changes requested", value: changes.length, icon: PencilLine, tone: "text-status-changes" },
-    { label: "Approved, last 30 days", value: approved30, icon: CheckCircle2, tone: "text-status-approved" },
+    { label: "Waiting on clients", value: waiting.length, icon: ClockIcon, tone: "text-status-review" },
+    { label: "Overdue", value: overdue.length, icon: WarningIcon, tone: overdue.length ? "text-destructive" : "text-muted-foreground" },
+    { label: "Changes requested", value: changes.length, icon: PencilLineIcon, tone: "text-status-changes" },
+    { label: "Approved, last 30 days", value: approved30, icon: CheckCircleIcon, tone: "text-status-approved" },
   ];
 
   return (
@@ -61,14 +61,14 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
         actions={<AddClientDialog slug={slug} />}
       />
 
-      <dl className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-xl border bg-card p-4">
-            <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+      <dl className="mb-10 grid grid-cols-2 border-y lg:grid-cols-4">
+        {stats.map((s, i) => (
+          <div key={s.label} className={cn("py-5 pr-4", i % 2 === 1 && "pl-4 border-l", i >= 2 && "border-t lg:border-t-0", i === 2 && "lg:pl-4 lg:border-l")}>
+            <dt className="flex items-center gap-2 text-sm text-muted-foreground">
               <s.icon className={cn("size-4", s.tone)} aria-hidden="true" />
               {s.label}
             </dt>
-            <dd className="mt-2 text-3xl font-semibold tracking-tight tabular">{s.value}</dd>
+            <dd className="mt-1 font-display text-4xl font-semibold tracking-tight tabular">{s.value}</dd>
           </div>
         ))}
       </dl>
@@ -127,10 +127,10 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
 
 function GettingStarted({ slug, name }: { slug: string; name: string }) {
   const steps = [
-    { icon: FolderPlus, title: "Add your first client", body: "Each client gets a private space that only they and your team can see." },
-    { icon: Upload, title: "Upload a deliverable", body: "Logos, ads, PDFs, videos. Every upload becomes a new version." },
-    { icon: Send, title: "Ask for approval", body: "Your client approves or asks for changes, from any device." },
-    { icon: UserPlus, title: "Invite your client", body: "Send them a link. They only ever see their own work." },
+    { icon: FolderPlusIcon, title: "Add your first client", body: "Each client gets a private space that only they and your team can see." },
+    { icon: UploadSimpleIcon, title: "Upload a deliverable", body: "Logos, ads, PDFs, videos. Every upload becomes a new version." },
+    { icon: PaperPlaneTiltIcon, title: "Ask for approval", body: "Your client approves or asks for changes, from any device." },
+    { icon: UserPlusIcon, title: "Invite your client", body: "Send them a link. They only ever see their own work." },
   ];
   return (
     <div className="mx-auto max-w-2xl py-6">

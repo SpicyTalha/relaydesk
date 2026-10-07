@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { ArrowUp } from "lucide-react";
+import { ArrowUpIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,7 +50,7 @@ export function CommentComposer({ slug, deliverableId, versionId }: { slug: stri
           <Kbd>Ctrl</Kbd> <Kbd>Enter</Kbd> to send
         </span>
         <Button size="sm" onClick={send} disabled={!body.trim() || pending} className="ml-auto">
-          {pending ? <Spinner /> : <ArrowUp />}
+          {pending ? <Spinner /> : <ArrowUpIcon />}
           Send
         </Button>
       </div>

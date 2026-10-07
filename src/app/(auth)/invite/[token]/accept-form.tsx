@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { AlertCircle } from "lucide-react";
+import { WarningCircleIcon } from "@phosphor-icons/react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SubmitButton } from "@/components/submit-button";
 import { initialFormState } from "@/lib/form-state";
@@ -14,7 +14,7 @@ export function AcceptInviteForm({ token }: { token: string }) {
       <input type="hidden" name="token" value={token} />
       {state.error && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <WarningCircleIcon />
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}

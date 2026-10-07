@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Mail } from "lucide-react";
+import { EnvelopeIcon } from "@phosphor-icons/react/ssr";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -95,13 +95,13 @@ async function Team({
               return (
                 <li key={i.id} className="flex items-center gap-3 px-4 py-3 sm:px-6">
                   <span className="grid size-8 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground">
-                    <Mail className="size-4" aria-hidden="true" />
+                    <EnvelopeIcon className="size-4" aria-hidden="true" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{i.email}</p>
                     <p className="text-xs text-muted-foreground">
                       {ROLE_LABEL[i.role]}
-                      {i.clientName ? ` · ${i.clientName}` : ""} · {expired ? "Expired" : `sent ${timeAgo(i.createdAt, now)}`}
+                      {i.clientName ? `, ${i.clientName}` : ""}. {expired ? "Expired" : `Sent ${timeAgo(i.createdAt, now)}`}
                     </p>
                   </div>
                   {expired && <Badge variant="secondary">Expired</Badge>}
@@ -156,7 +156,7 @@ function MemberCard({
                   {m.userId === selfId && <span className="font-normal text-muted-foreground"> (you)</span>}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {m.clientName ? `${m.clientName} · ` : ""}joined {timeAgo(m.joinedAt, now)}
+                  {m.clientName ? `${m.clientName}, joined ` : "Joined "}{timeAgo(m.joinedAt, now)}
                 </p>
               </div>
               <Badge variant={m.role === "owner" ? "default" : "secondary"}>{ROLE_LABEL[m.role]}</Badge>

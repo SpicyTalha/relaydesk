@@ -1,22 +1,23 @@
 import { cn } from "cn";
 
-/** Relaydesk mark: a document handed forward, with a check. */
+/**
+ * The sign-off: a stamp ring with a check that passes out of it (approved, and handed back).
+ * One circle and one polyline on a 32 grid, so it holds at 16 px. See docs/BRAND.md.
+ */
 export function LogoMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" aria-hidden="true" className={cn("size-7", className)}>
-      <rect width="32" height="32" rx="8" className="fill-primary" />
-      <path d="M9 9.5h9.5a4.5 4.5 0 0 1 0 9H13" fill="none" stroke="white" strokeWidth="2.6" strokeLinecap="round" />
-      <path d="m13 15-3.5 3.5L13 22" fill="none" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="22.5" cy="22.5" r="3" fill="white" />
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={cn("size-7 shrink-0", className)}>
+      <circle cx="16" cy="16" r="11.5" fill="none" stroke="currentColor" strokeWidth="3.2" />
+      <path d="M10.5 16.5l4 4L29 6" fill="none" className="stroke-brand" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2 font-semibold tracking-tight", className)}>
-      <LogoMark />
-      <span className="text-[1.05rem]">Relaydesk</span>
+    <span className={cn("inline-flex items-center gap-2", className)}>
+      <LogoMark className="size-6" />
+      <span className="font-display text-[1.2rem] font-bold tracking-[-0.035em]">Relaydesk</span>
     </span>
   );
 }

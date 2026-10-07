@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CreditCard, Inbox, Plus, Settings, Users } from "lucide-react";
+import { CreditCardIcon, GearIcon, PlusIcon, TrayIcon, UsersIcon } from "@phosphor-icons/react";
 import { cn } from "cn";
 import {
   Sidebar,
@@ -40,10 +40,10 @@ export function TeamSidebar({
   const pathname = usePathname();
   const base = `/w/${slug}`;
   const nav = [
-    { href: base, label: "Overview", icon: Inbox, exact: true },
-    { href: `${base}/team`, label: "Team", icon: Users },
-    { href: `${base}/settings`, label: "Settings", icon: Settings },
-    ...(isOwner ? [{ href: `${base}/billing`, label: "Billing", icon: CreditCard }] : []),
+    { href: base, label: "Overview", icon: TrayIcon, exact: true },
+    { href: `${base}/team`, label: "Team", icon: UsersIcon },
+    { href: `${base}/settings`, label: "Settings", icon: GearIcon },
+    ...(isOwner ? [{ href: `${base}/billing`, label: "Billing", icon: CreditCardIcon }] : []),
   ];
   const isActive = (href: string, exact?: boolean) => (exact ? pathname === href : pathname.startsWith(href));
 
@@ -85,7 +85,7 @@ export function TeamSidebar({
             slug={slug}
             trigger={
               <SidebarGroupAction title="Add client">
-                <Plus />
+                <PlusIcon />
                 <span className="sr-only">Add client</span>
               </SidebarGroupAction>
             }

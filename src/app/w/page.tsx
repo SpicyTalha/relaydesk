@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { CaretRightIcon } from "@phosphor-icons/react/ssr";
 import { Logo } from "@/components/brand/logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getMyWorkspaces } from "@/lib/data/workspace";
@@ -44,7 +44,7 @@ async function WorkspacePicker() {
                 <p className="font-medium">{w.name}</p>
                 <p className="text-sm text-muted-foreground">{w.role === "client" ? "Client access" : `You're ${w.role === "owner" ? "the owner" : "a team member"}`}</p>
               </div>
-              <ChevronRight className="size-4 text-muted-foreground" />
+              <CaretRightIcon className="size-4 text-muted-foreground" />
             </Link>
           </li>
         ))}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarClock, ChevronRight, MessageSquare } from "lucide-react";
+import { CalendarDotsIcon, CaretRightIcon, ChatCircleIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import { StatusBadge } from "@/components/status-badge";
 import { ACCENT_SWATCH } from "@/lib/data/clients";
@@ -46,13 +46,13 @@ export function DeliverableRow({
             )}
             {due && (
               <span className={cn("inline-flex items-center gap-1", DUE_TONE[due.tone])}>
-                <CalendarClock className="size-3.5" aria-hidden="true" />
+                <CalendarDotsIcon className="size-3.5" aria-hidden="true" />
                 {due.label}
               </span>
             )}
             {d.commentCount > 0 && (
               <span className="inline-flex items-center gap-1 tabular">
-                <MessageSquare className="size-3.5" aria-hidden="true" />
+                <ChatCircleIcon className="size-3.5" aria-hidden="true" />
                 {d.commentCount}
                 <span className="sr-only">comments</span>
               </span>
@@ -65,7 +65,7 @@ export function DeliverableRow({
           )}
         </div>
         <StatusBadge status={d.status} audience={audience} className="hidden sm:inline-flex" />
-        <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        <CaretRightIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
       </Link>
     </li>
   );

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarClock, CheckCircle2, ChevronLeft, Clock, FileUp, PencilLine } from "lucide-react";
+import { CalendarDotsIcon, CaretLeftIcon, CheckCircleIcon, ClockIcon, FileArrowUpIcon, PencilLineIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { StatusBadge } from "@/components/status-badge";
 import { FilePreview } from "@/components/deliverable/file-preview";
+import { StampOverlay } from "@/components/deliverable/stamp-overlay";
 import { ReviewPanel } from "@/components/deliverable/review-panel";
 import { TeamActions } from "@/components/deliverable/team-actions";
 import { CommentComposer, DeleteCommentButton } from "@/components/deliverable/comment-composer";
@@ -20,7 +21,7 @@ import { getDeliverable } from "@/lib/data/deliverables";
 import { getComments } from "@/lib/data/comments";
 import { createClient } from "@/lib/supabase/server";
 import { currentTime } from "@/lib/now";
-import { dueInfo, timeAgo } from "@/lib/format";
+import { dueInfo, shortDate, timeAgo } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Deliverable" };
 
@@ -66,6 +67,8 @@ async function Deliverable({
   }
 
   const due = d.status === "in_review" ? dueInfo(d.dueOn, now) : null;
+  // The stamp sits on the exact version the client approved, not on later uploads.
+  const approval = shown ? d.reviews.find((r) => r.decision === "approved" && r.versionId === shown.id) : undefined;
   const clientCanDecide = !ws.isTeam && d.status === "in_review" && !!latest;
   const backHref = `/w/${slug}/c/${d.client.id}`;
 
@@ -76,7 +79,7 @@ async function Deliverable({
           href={backHref}
           className="inline-flex items-center gap-1 rounded text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <ChevronLeft className="size-4" aria-hidden="true" />
+          <CaretLeftIcon className="size-4" aria-hidden="true" />
           {ws.isTeam ? (
             <span className="inline-flex items-center gap-1.5">
               <span className={cn("size-2 rounded-full", ACCENT_SWATCH[d.client.accent])} aria-hidden="true" />
@@ -94,7 +97,7 @@ async function Deliverable({
               {latest && <span className="tabular">Version {latest.version}</span>}
               {due && (
                 <span className={cn("inline-flex items-center gap-1", due.tone === "overdue" && "text-destructive")}>
-                  <CalendarClock className="size-4" aria-hidden="true" />
+                  <CalendarDotsIcon className="size-4" aria-hidden="true" />
                   {due.label}
                 </span>
               )}
@@ -136,7 +139,7 @@ async function Deliverable({
                       )}
                     >
                       v{v.version}
-                      {v.id === latest?.id && " · latest"}
+                      {v.id === latest?.id && <span className="ml-1 font-normal opacity-75">latest</span>}
                     </Link>
                   ))}
                 </nav>
@@ -146,6 +149,14 @@ async function Deliverable({
                   You&apos;re looking at version {shown.version}. The latest is version {latest?.version}.
                 </p>
               )}
+              <div className="relative">
+                {approval && (
+                  <StampOverlay
+                    version={shown.version}
+                    date={shortDate(approval.createdAt, now)}
+                    fresh={now - Date.parse(approval.createdAt) < 20_000}
+                  />
+                )}
               <FilePreview
                 url={viewUrl}
                 downloadUrl={downloadUrl}
@@ -153,6 +164,7 @@ async function Deliverable({
                 mimeType={shown.mimeType}
                 sizeBytes={shown.sizeBytes}
               />
+              </div>
               {shown.note && (
                 <p className="rounded-lg border bg-muted/30 px-3 py-2 text-sm">
                   <span className="font-medium">{shown.uploaderName}:</span> {shown.note}
@@ -163,7 +175,7 @@ async function Deliverable({
             <Empty className="rounded-xl border border-dashed py-16">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <FileUp />
+                  <FileArrowUpIcon />
                 </EmptyMedia>
                 <EmptyTitle>No file yet</EmptyTitle>
                 <EmptyDescription>Upload the first version, then ask {d.client.name} to approve it.</EmptyDescription>
@@ -192,8 +204,8 @@ async function Deliverable({
                         {c.authorIsClient && ws.isTeam && <span className="text-xs text-status-review">Client</span>}
                         <span className="text-xs text-muted-foreground">
                           <time dateTime={c.createdAt}>{timeAgo(c.createdAt, now)}</time>
-                          {v && ` · on v${v.version}`}
                         </span>
+                        {v && <span className="text-xs text-muted-foreground tabular">on v{v.version}</span>}
                       </p>
                       {c.deleted ? (
                         <p className="mt-1 text-sm text-muted-foreground italic">Comment deleted</p>
@@ -262,7 +274,7 @@ async function Deliverable({
   );
 }
 
-type HistoryEntry = { key: string; at: string; text: string; note?: string; icon: typeof Clock; tone: string };
+type HistoryEntry = { key: string; at: string; text: string; note?: string; icon: typeof ClockIcon; tone: string };
 
 /** Uploads and decisions in one timeline, newest first: the written record clients and agencies both trust. */
 function buildHistory(d: Awaited<ReturnType<typeof getDeliverable>>): HistoryEntry[] {
@@ -271,18 +283,18 @@ function buildHistory(d: Awaited<ReturnType<typeof getDeliverable>>): HistoryEnt
       key: `v-${v.id}`,
       at: v.createdAt,
       text: `${v.uploaderName} uploaded version ${v.version}`,
-      icon: FileUp,
+      icon: FileArrowUpIcon,
       tone: "bg-primary/12 text-primary",
     })),
     ...d.reviews.map((r) => {
       const version = d.versions.find((v) => v.id === r.versionId)?.version;
       return r.decision === "approved"
-        ? { key: `r-${r.id}`, at: r.createdAt, text: `${r.reviewerName} approved version ${version}`, note: r.note || undefined, icon: CheckCircle2, tone: "bg-status-approved/15 text-status-approved" }
-        : { key: `r-${r.id}`, at: r.createdAt, text: `${r.reviewerName} requested changes on version ${version}`, note: r.note || undefined, icon: PencilLine, tone: "bg-status-changes/15 text-status-changes" };
+        ? { key: `r-${r.id}`, at: r.createdAt, text: `${r.reviewerName} approved version ${version}`, note: r.note || undefined, icon: CheckCircleIcon, tone: "bg-status-approved/15 text-status-approved" }
+        : { key: `r-${r.id}`, at: r.createdAt, text: `${r.reviewerName} requested changes on version ${version}`, note: r.note || undefined, icon: PencilLineIcon, tone: "bg-status-changes/15 text-status-changes" };
     }),
   ];
   if (d.approvalRequestedAt && d.status === "in_review") {
-    entries.push({ key: "requested", at: d.approvalRequestedAt, text: "Approval requested", icon: Clock, tone: "bg-status-review/15 text-status-review" });
+    entries.push({ key: "requested", at: d.approvalRequestedAt, text: "Approval requested", icon: ClockIcon, tone: "bg-status-review/15 text-status-review" });
   }
   return entries.sort((a, b) => b.at.localeCompare(a.at));
 }
