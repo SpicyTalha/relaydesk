@@ -112,7 +112,8 @@ create table public.deliverable_versions (
   deliverable_id uuid not null,
   workspace_id uuid not null,
   client_id uuid not null,
-  version integer not null,
+  -- Assigned by the prepare_version trigger; the default only exists so clients never pass it.
+  version integer not null default 0,
   file_name text not null check (char_length(file_name) between 1 and 180 and file_name !~ '[/\\]'),
   mime_type text not null check (char_length(mime_type) <= 120),
   size_bytes bigint not null check (size_bytes > 0 and size_bytes <= 52428800),

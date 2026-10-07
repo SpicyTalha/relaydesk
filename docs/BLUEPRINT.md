@@ -93,7 +93,7 @@ Browser ──> Vercel (Next.js 16, App Router, Node runtime)
 2. **Server Components + Server Actions, no separate API layer.** Fewer moving parts for an MVP. The only route handlers are for things that must be HTTP endpoints (webhook, cron).
 3. **The webhook is the source of truth for plans.** The checkout success page only shows a "confirming your plan" state; it never grants anything.
 4. **Invites by link first, email second.** The link works with no email provider configured. Email delivery switches on when an SMTP or Resend key is present.
-5. **Demo mode.** "Sign in as Owner" and "Sign in as Client" buttons log into seeded accounts, and a nightly job resets the demo workspace. Real sign-ups get their own empty workspace and are never mixed with demo data.
+5. **Demo mode: a private sandbox per visitor, not a shared demo account.** A shared demo login lets one visitor approve everything, delete files, post junk the next visitor sees, or change the shared password through the auth API. Instead, "Try the demo" creates a fresh copy of the demo agency for that visitor: four demo users, seeded clients, files and history. A "View as client" switch signs them into the client side of *their own* copy. Switching uses a server-generated one-time sign-in link, so the demo users have no known passwords. Copies are deleted after 24 hours, creation is rate-limited per IP, and uploads in demo workspaces are capped. Real sign-ups get their own empty workspace and never see demo data.
 
 ## 9. Monthly running cost
 
