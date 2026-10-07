@@ -68,10 +68,11 @@ export function ReviewPanel({
   }
 
   const buttons = (
-    <div className="grid grid-cols-2 gap-2">
+    // Thumb-sized on a phone, and Approve is the big green button the landing page promises.
+    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] gap-2">
       <Dialog open={changesOpen} onOpenChange={(o) => !pending && setChangesOpen(o)}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="lg" disabled={pending}>
+          <Button variant="outline" size="lg" disabled={pending} className="h-12 rounded-full bg-white text-[15px]">
             <PencilLineIcon />
             Request changes
           </Button>
@@ -116,8 +117,8 @@ export function ReviewPanel({
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button size="lg" disabled={pending} className="bg-status-approved text-white hover:bg-status-approved/90">
-            <CheckIcon />
+          <Button size="lg" disabled={pending} className="h-12 rounded-full bg-status-approved text-[15px] font-semibold text-white hover:bg-status-approved/90">
+            <CheckIcon weight="bold" />
             Approve
           </Button>
         </AlertDialogTrigger>

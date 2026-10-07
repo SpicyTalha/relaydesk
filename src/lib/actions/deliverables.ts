@@ -37,7 +37,7 @@ export async function createDeliverable(input: z.input<typeof createSchema>): Pr
 
   const ws = await getWorkspaceContext(slug);
   if (!ws.isTeam) return { ok: false, error: "Only the agency team can add deliverables." };
-  if (ws.suspended) return { ok: false, error: "This workspace is suspended." };
+  if (ws.suspended) return { ok: false, error: "This studio is suspended." };
 
   const supabase = await createClient();
   const { data, error } = await supabase

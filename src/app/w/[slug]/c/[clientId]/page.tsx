@@ -189,7 +189,7 @@ function ClientPortal({
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Hi {firstName(name)}</h1>
+        <h1 className="font-display text-[2rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[2.5rem]">Hi {firstName(name)}</h1>
         <p className="text-sm text-muted-foreground">
           {yourTurn.length
             ? `${agency} is waiting on ${yourTurn.length === 1 ? "one thing" : `${yourTurn.length} things`} from you.`
@@ -202,7 +202,8 @@ function ClientPortal({
           Waiting for you
         </h2>
         {yourTurn.length ? (
-          <Card className="gap-0 py-0">
+          // What's waiting on the client gets the one loud treatment on the page: an ink edge, offset in process yellow.
+          <Card className="gap-0 border-ink py-0 shadow-[5px_5px_0_var(--color-process-yellow)]">
             <ul className="divide-y">
               {yourTurn.map((d) => (
                 <DeliverableRow key={d.id} d={d} slug={slug} audience="client" showClient={false} now={now} />

@@ -7,7 +7,7 @@ import { Logo } from "@/components/brand/logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getMyWorkspaces } from "@/lib/data/workspace";
 
-export const metadata: Metadata = { title: "Your workspaces" };
+export const metadata: Metadata = { title: "Your studios" };
 
 /** Sends people where they belong: onboarding, their only workspace, or a picker. */
 export default function WorkspacesPage() {
@@ -32,7 +32,7 @@ async function WorkspacePicker() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Choose a workspace</h1>
+      <h1 className="font-display text-[2rem] leading-tight font-extrabold tracking-[-0.04em]">Choose a studio</h1>
       <ul className="divide-y rounded-xl border bg-card">
         {workspaces.map((w) => (
           <li key={w.id}>

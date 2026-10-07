@@ -9,15 +9,20 @@ export function FilePreview({
   fileName,
   mimeType,
   sizeBytes,
+  overlay,
 }: {
   url: string | null;
   downloadUrl: string | null;
   fileName: string;
   mimeType: string;
   sizeBytes: number;
+  /** Laid on the proof itself, e.g. the approval stamp. */
+  overlay?: React.ReactNode;
 }) {
   const kind = previewKind(mimeType);
-  const frame = "relative overflow-hidden rounded-xl border bg-[repeating-conic-gradient(var(--muted)_0_25%,transparent_0_50%)] bg-[length:20px_20px]";
+  // Work is reviewed the way a studio would: a proof on the cutting mat. The checkerboard shows transparency.
+  const checker = "bg-white bg-[repeating-conic-gradient(var(--muted)_0_25%,transparent_0_50%)] bg-[length:20px_20px]";
+  const paper = "relative bg-white p-2 shadow-[0_1px_0_rgb(0_0_0/0.04),0_24px_40px_-20px_rgb(0_0_0/0.6)] sm:p-2.5";
 
   if (!url) {
     return (
@@ -30,24 +35,32 @@ export function FilePreview({
   return (
     <div className="space-y-2">
       {kind === "image" && (
-        <div className={frame}>
-          {/* Signed, short-lived URL from private storage; next/image would cache it beyond its expiry. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={url} alt={fileName} className="mx-auto max-h-[70vh] w-auto object-contain" />
+        <div className="mat grid place-items-center overflow-hidden rounded-xl px-4 py-6 sm:px-10 sm:py-10">
+          <div className={paper}>
+            {/* Signed, short-lived URL from private storage; next/image would cache it beyond its expiry. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt={fileName} className={`block max-h-[64vh] w-auto object-contain ${checker}`} />
+            {overlay}
+          </div>
         </div>
       )}
       {kind === "pdf" && (
-        <div className={`${frame} h-[70vh] min-h-96 bg-muted`}>
-          <iframe src={`${url}#view=FitH`} title={fileName} className="size-full" />
+        <div className="mat overflow-hidden rounded-xl p-3 sm:p-6">
+          <div className={`${paper} h-[70vh] min-h-96`}>
+            <iframe src={`${url}#view=FitH`} title={fileName} className="size-full" />
+            {overlay}
+          </div>
         </div>
       )}
       {kind === "video" && (
-        <div className="overflow-hidden rounded-xl border bg-black">
+        <div className="relative overflow-hidden rounded-xl border bg-black">
           <video src={url} controls playsInline preload="metadata" className="mx-auto max-h-[70vh] w-full" />
+          {overlay}
         </div>
       )}
       {kind === "file" && (
-        <div className="flex flex-col items-center gap-3 rounded-xl border bg-muted/40 px-6 py-14 text-center">
+        <div className="relative flex flex-col items-center gap-3 rounded-xl border bg-muted/40 px-6 py-14 text-center">
+          {overlay}
           <FileIcon className="size-10 text-muted-foreground" aria-hidden="true" />
           <div>
             <p className="font-medium">{fileName}</p>

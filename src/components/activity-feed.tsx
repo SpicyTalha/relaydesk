@@ -37,7 +37,7 @@ function describe(a: ActivityItem): React.ReactNode {
     case "deliverable.created":
       return <>{who} created {what}</>;
     case "workspace.created":
-      return <>{who} created the workspace</>;
+      return <>{who} set up the studio</>;
     default:
       return <>{who} made a change</>;
   }

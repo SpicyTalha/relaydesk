@@ -47,10 +47,16 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
   const overdue = waiting.filter((d) => dueInfo(d.dueOn, now)?.tone === "overdue");
 
   const stats = [
-    { label: "Waiting on clients", value: waiting.length, icon: ClockIcon, tone: "text-status-review" },
-    { label: "Overdue", value: overdue.length, icon: WarningIcon, tone: overdue.length ? "text-destructive" : "text-muted-foreground" },
-    { label: "Changes requested", value: changes.length, icon: PencilLineIcon, tone: "text-status-changes" },
-    { label: "Approved, last 30 days", value: approved30, icon: CheckCircleIcon, tone: "text-status-approved" },
+    { label: "Waiting on clients", value: waiting.length, icon: ClockIcon, tone: "text-status-review", bar: "bg-status-review" },
+    {
+      label: "Overdue",
+      value: overdue.length,
+      icon: WarningIcon,
+      tone: overdue.length ? "text-pen" : "text-muted-foreground",
+      bar: overdue.length ? "bg-pen" : "bg-ink/15",
+    },
+    { label: "Changes requested", value: changes.length, icon: PencilLineIcon, tone: "text-status-changes", bar: "bg-status-changes" },
+    { label: "Approved, last 30 days", value: approved30, icon: CheckCircleIcon, tone: "text-status-approved", bar: "bg-status-approved" },
   ];
 
   return (
@@ -61,14 +67,18 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
         actions={<AddClientDialog slug={slug} />}
       />
 
-      <dl className="mb-10 grid grid-cols-2 border-y lg:grid-cols-4">
-        {stats.map((s, i) => (
-          <div key={s.label} className={cn("py-5 pr-4", i % 2 === 1 && "pl-4 border-l", i >= 2 && "border-t lg:border-t-0", i === 2 && "lg:pl-4 lg:border-l")}>
+      <dl className="mb-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="relative overflow-hidden rounded-xl bg-card p-4 pt-5 shadow-[0_0_0_1px_rgb(21_23_26/0.07),0_14px_30px_-24px_rgb(21_23_26/0.55)]"
+          >
+            <span aria-hidden="true" className={cn("absolute inset-x-0 top-0 h-1.5", s.bar)} />
             <dt className="flex items-center gap-2 text-sm text-muted-foreground">
               <s.icon className={cn("size-4", s.tone)} aria-hidden="true" />
               {s.label}
             </dt>
-            <dd className="mt-1 font-display text-4xl font-semibold tracking-tight tabular">{s.value}</dd>
+            <dd className="mt-2 font-display text-5xl leading-none font-extrabold tracking-[-0.05em] tabular">{s.value}</dd>
           </div>
         ))}
       </dl>
@@ -137,21 +147,32 @@ function GettingStarted({ slug, name }: { slug: string; name: string }) {
       <PageHeader title={`Welcome, ${firstName(name)}`} description="Four steps and your first approval is on its way." />
       <ol className="space-y-3">
         {steps.map((s, i) => (
-          <li key={s.title} className="flex gap-4 rounded-xl border bg-card p-4">
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary tabular">
+          <li
+            key={s.title}
+            aria-current={i === 0 ? "step" : undefined}
+            className={cn("flex gap-4 rounded-xl border bg-card p-4", i === 0 && "border-ink shadow-[0_14px_30px_-22px_rgb(21_23_26/0.6)]")}
+          >
+            <span
+              className={cn(
+                "grid size-9 shrink-0 place-items-center rounded-full text-sm font-semibold tabular",
+                i === 0 ? "bg-process-yellow text-ink ring-2 ring-ink" : "border text-muted-foreground",
+              )}
+            >
               {i + 1}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-medium">{s.title}</p>
+              <p className={cn("font-medium", i > 0 && "text-foreground/70")}>{s.title}</p>
               <p className="text-sm text-muted-foreground">{s.body}</p>
+              {i === 0 && (
+                <div className="mt-3">
+                  <AddClientDialog slug={slug} />
+                </div>
+              )}
             </div>
             <s.icon className="mt-1 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
           </li>
         ))}
       </ol>
-      <div className="mt-6">
-        <AddClientDialog slug={slug} />
-      </div>
     </div>
   );
 }

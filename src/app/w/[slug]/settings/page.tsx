@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/page-header";
-import { DeleteWorkspace, ProfileForm, WorkspaceNameForm } from "@/components/settings-forms";
+import { DeleteWorkspace, PasswordForm, ProfileForm, WorkspaceNameForm } from "@/components/settings-forms";
 import { getProfile, getWorkspaceContext } from "@/lib/data/workspace";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -32,10 +32,21 @@ async function Settings({ params }: { params: Promise<{ slug: string }> }) {
           <ProfileForm fullName={profile.fullName} />
         </CardContent>
       </Card>
+      {!ws.isDemo && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Password</CardTitle>
+            <CardDescription>You&apos;ll need your current one. Forgot it? Sign out and use &ldquo;Forgot password?&rdquo;.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PasswordForm />
+          </CardContent>
+        </Card>
+      )}
       {ws.isTeam && (
         <Card>
           <CardHeader>
-            <CardTitle>Workspace</CardTitle>
+            <CardTitle>Studio</CardTitle>
           </CardHeader>
           <CardContent>
             <WorkspaceNameForm slug={slug} name={ws.name} disabled={!ws.isOwner} />
@@ -45,7 +56,7 @@ async function Settings({ params }: { params: Promise<{ slug: string }> }) {
       {ws.isOwner && !ws.isDemo && (
         <Card className="border-destructive/30">
           <CardHeader>
-            <CardTitle>Delete workspace</CardTitle>
+            <CardTitle>Delete studio</CardTitle>
             <CardDescription>Permanently removes every client space, file, comment and approval.</CardDescription>
           </CardHeader>
           <CardContent>

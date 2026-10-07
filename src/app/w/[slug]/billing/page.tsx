@@ -62,7 +62,7 @@ async function Billing({
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <PageHeader title="Billing" description="Plans, usage and invoices for this workspace." actions={hasSubscription && <ManageBillingButton slug={slug} />} />
+      <PageHeader title="Billing" description="Plans, usage and invoices for this studio." actions={hasSubscription && <ManageBillingButton slug={slug} />} />
 
       {picked && (
         <section aria-labelledby="finish-title" className="relative overflow-hidden rounded-2xl bg-process-yellow p-6 text-ink sm:p-8">

@@ -103,3 +103,25 @@ test("a used or bad reset link explains itself and offers a new one", async ({ p
   await page.getByRole("link", { name: "Send a new link" }).click();
   await expect(page).toHaveURL(/\/forgot-password$/);
 });
+
+test("a signed-in owner changes their password in Settings, proving the current one first", async ({ page }) => {
+  const email = uniqueEmail("noor");
+  await page.goto("/signup");
+  await fillAccount(page, "Noor Haddad", email);
+  await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByLabel("Studio name").fill("Saltmarsh Studio");
+  await page.getByRole("button", { name: "Create studio" }).click();
+  await expect(page).toHaveURL(/\/w\/saltmarsh-studio[a-z0-9-]*$/);
+  await page.goto(`${new URL(page.url()).pathname}/settings`);
+
+  await page.getByLabel("Current password", { exact: true }).fill("not-my-password");
+  await page.getByLabel("New password", { exact: true }).fill("another-Password-42");
+  await page.getByRole("button", { name: "Change password" }).click();
+  await expect(page.getByText("That's not your current password.")).toBeVisible();
+
+  await page.getByLabel("Current password", { exact: true }).fill(PASSWORD);
+  await page.getByLabel("New password", { exact: true }).fill("another-Password-42");
+  await page.getByRole("button", { name: "Change password" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Password changed." })).toBeVisible();
+  await expect(page.getByLabel("Current password", { exact: true })).toHaveValue("");
+});

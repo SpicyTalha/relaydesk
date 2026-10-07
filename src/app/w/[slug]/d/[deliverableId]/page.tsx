@@ -91,7 +91,7 @@ async function Deliverable({
         </Link>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-balance">{d.title}</h1>
+            <h1 className="font-display text-[2rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[2.5rem]">{d.title}</h1>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
               <StatusBadge status={d.status} audience={audience} />
               {latest && <span className="tabular">Version {latest.version}</span>}
@@ -149,22 +149,22 @@ async function Deliverable({
                   You&apos;re looking at version {shown.version}. The latest is version {latest?.version}.
                 </p>
               )}
-              <div className="relative">
-                {approval && (
-                  <StampOverlay
-                    version={shown.version}
-                    date={shortDate(approval.createdAt, now)}
-                    fresh={now - Date.parse(approval.createdAt) < 20_000}
-                  />
-                )}
               <FilePreview
                 url={viewUrl}
                 downloadUrl={downloadUrl}
                 fileName={shown.fileName}
                 mimeType={shown.mimeType}
                 sizeBytes={shown.sizeBytes}
+                overlay={
+                  approval && (
+                    <StampOverlay
+                      version={shown.version}
+                      date={shortDate(approval.createdAt, now)}
+                      fresh={now - Date.parse(approval.createdAt) < 20_000}
+                    />
+                  )
+                }
               />
-              </div>
               {shown.note && (
                 <p className="rounded-lg border bg-muted/30 px-3 py-2 text-sm">
                   <span className="font-medium">{shown.uploaderName}:</span> {shown.note}

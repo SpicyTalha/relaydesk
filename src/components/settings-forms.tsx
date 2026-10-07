@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useActionState, useState, useTransition } from "react";
+import { CheckCircleIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
@@ -16,7 +17,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteWorkspace, renameWorkspace, updateProfile } from "@/lib/actions/settings";
+import { SubmitButton } from "@/components/submit-button";
+import { PasswordInput } from "@/components/auth/password-input";
+import { initialFormState } from "@/lib/form-state";
+import { changePassword, deleteWorkspace, renameWorkspace, updateProfile } from "@/lib/actions/settings";
 
 export function SingleFieldForm({
   id,
@@ -72,7 +76,7 @@ export function WorkspaceNameForm({ slug, name, disabled }: { slug: string; name
   return (
     <SingleFieldForm
       id="ws-name"
-      label="Workspace name"
+      label="Studio name"
       description={disabled ? "Only owners can change this." : "Clients see this on every page."}
       initial={name}
       maxLength={60}
@@ -101,7 +105,7 @@ export function DeleteWorkspace({ slug, name }: { slug: string; name: string }) 
   return (
     <AlertDialog onOpenChange={(o) => !o && setConfirm("")}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete workspace</Button>
+        <Button variant="destructive">Delete studio</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -134,5 +138,36 @@ export function DeleteWorkspace({ slug, name }: { slug: string; name: string }) 
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+export function PasswordForm() {
+  const [state, action] = useActionState(changePassword, initialFormState);
+  const errs = (key: string) => state.fieldErrors?.[key]?.map((message) => ({ message }));
+  return (
+    // A fresh form after a successful change, so the old values don't linger.
+    <form key={state.success ? "done" : "editing"} action={action} noValidate className="space-y-4">
+      {state.success && (
+        <p role="status" className="flex items-center gap-2 text-sm text-status-approved">
+          <CheckCircleIcon weight="fill" className="size-4" aria-hidden="true" />
+          {state.success}
+        </p>
+      )}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field data-invalid={!!state.fieldErrors?.current}>
+          <FieldLabel htmlFor="current-password">Current password</FieldLabel>
+          <PasswordInput id="current-password" toggleLabel="Show current password" name="current" autoComplete="current-password" aria-invalid={!!state.fieldErrors?.current} />
+          <FieldError errors={errs("current")} />
+        </Field>
+        <Field data-invalid={!!state.fieldErrors?.next}>
+          <FieldLabel htmlFor="new-password">New password</FieldLabel>
+          <PasswordInput id="new-password" toggleLabel="Show new password" name="next" autoComplete="new-password" minLength={8} aria-invalid={!!state.fieldErrors?.next} />
+          {state.fieldErrors?.next ? <FieldError errors={errs("next")} /> : <FieldDescription>At least 8 characters.</FieldDescription>}
+        </Field>
+      </div>
+      <SubmitButton variant="outline" pendingText="Changing">
+        Change password
+      </SubmitButton>
+    </form>
   );
 }

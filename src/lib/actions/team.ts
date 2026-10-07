@@ -98,7 +98,7 @@ export async function removeMember(input: { slug: string; membershipId: string }
     .eq("workspace_id", ws.id)
     .select("id");
   if (error) return dbFail(error);
-  if (!data.length) return { ok: false, error: "That person isn't in this workspace." };
+  if (!data.length) return { ok: false, error: "That person isn't in this studio." };
   refresh();
   return { ok: true };
 }

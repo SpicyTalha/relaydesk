@@ -64,6 +64,13 @@ Primary buttons are **ink**, not magenta. In the app, magenta is rationed so it 
 
 Each colour gets a whole section, never a gradient. Halftone dots (`.halftone`) and masking tape (`.tape`) are the only textures.
 
+**In the app** the print world shows up in a few deliberate places only, so work stays the loudest thing on screen:
+
+- An ink sidebar frames the studio, with a process-yellow tick on the active item and yellow badges for work that came back.
+- Work is reviewed as a proof on the cutting mat, and the approval stamp lands on the proof itself.
+- What's waiting on a client gets an ink edge with a process-yellow offset.
+- Client change notes carry the red-pen rule.
+
 ## Type
 
 **Funnel Display** for headlines (tight tracking, -0.035em), **Funnel Sans** for everything else. Both are Google Fonts (OFL) loaded with `next/font`. Tabular figures for dates, counts, prices and versions. No monospace labels.

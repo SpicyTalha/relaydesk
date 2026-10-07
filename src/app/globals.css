@@ -111,14 +111,15 @@
   --chart-4: #2f6feb;
   --chart-5: #d12d7f;
 
-  --sidebar: #eef0f3;
-  --sidebar-foreground: #15171a;
-  --sidebar-primary: #15171a;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e3e6ea;
-  --sidebar-accent-foreground: #15171a;
-  --sidebar-border: #e0e3e8;
-  --sidebar-ring: #d12d7f;
+  /* The studio's frame: an ink sidebar, process yellow for what's active. */
+  --sidebar: #15171a;
+  --sidebar-foreground: #e6e8eb;
+  --sidebar-primary: #ffe14a;
+  --sidebar-primary-foreground: #15171a;
+  --sidebar-accent: #24272d;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 8%);
+  --sidebar-ring: #ffe14a;
 }
 
 .dark {

@@ -64,6 +64,7 @@ async function Shell({ params, children }: { params: Promise<{ slug: string }>; 
       <TeamSidebar
         slug={slug}
         workspaceName={ws.name}
+        plan={ws.plan}
         planLabel={PLAN_LABEL[ws.plan]}
         isOwner={ws.isOwner}
         clients={clients.map((c) => ({
@@ -92,7 +93,7 @@ async function Shell({ params, children }: { params: Promise<{ slug: string }>; 
 
 function ShellSkeleton() {
   return (
-    <div className="flex min-h-svh" aria-busy="true" aria-label="Loading workspace">
+    <div className="flex min-h-svh" aria-busy="true" aria-label="Loading your studio">
       <div className="hidden w-64 shrink-0 border-r bg-sidebar p-3 md:block">
         <Skeleton className="h-10 w-full" />
         <div className="mt-6 space-y-2">
