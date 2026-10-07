@@ -1,5 +1,7 @@
 # Relaydesk
 
+[![CI](https://github.com/SpicyTalha/relaydesk/actions/workflows/ci.yml/badge.svg)](https://github.com/SpicyTalha/relaydesk/actions/workflows/ci.yml)
+
 **Client approvals for creative agencies.** Every client gets a private space to review work and approve it or ask for changes from any device. Every version and every decision is saved with a name and a date.
 
 **Live demo: [relaydesk-plum.vercel.app](https://relaydesk-plum.vercel.app)**. Click *Try it as the agency*, then *View as the client*. You get your own private copy with sample data. It's deleted after a day.
