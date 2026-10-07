@@ -28,7 +28,12 @@ The platform admin flag lives in Supabase `app_metadata` (only the server can se
 | 5 | **Admin panel** | Platform admins see workspaces, plans, test-mode MRR, the webhook event log (processed and duplicates skipped) and the audit log, and can suspend a workspace. |
 | 6 | **AI revision checklist** | One click turns a feedback thread into a checklist. Each item quotes the comment it came from. The output is labelled as AI-generated, and the feature is rate-limited and Pro-plan only. |
 
-The $600 MVP package in the gig maps to features 1 to 3; the $1,500 Full launch package maps to all six.
+| 7 | **Pins on the work** | A client taps an image to pin a numbered note to that spot. Pins stay on their version, link to their comment, and the studio resolves them. Demo copies arrive with earlier pins. |
+| 8 | **Compare versions** | A slider wipes between two image versions; it works with the keyboard and screen readers. |
+| 9 | **Sign-off sheet** | A printable record of an approval (who, which version, when, every round before it) with the SHA-256 fingerprint of the exact approved file. |
+| 10 | **Search, nudges, notifications** | Ctrl/⌘K jumps to any deliverable, client or page. Work waiting on a client gets a ready-made reminder. A bell shows what others did since you last looked. |
+
+The $600 MVP package in the gig maps to features 1 to 3; the $1,500 Full launch package maps to all six. Features 7 to 10 show what a polished V1 adds on top.
 
 ## 4. Plans
 
