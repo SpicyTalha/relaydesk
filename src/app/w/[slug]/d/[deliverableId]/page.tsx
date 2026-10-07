@@ -11,6 +11,7 @@ import {
   FileArrowUpIcon,
   PencilLineIcon,
   PushPinIcon,
+  SealCheckIcon,
   XIcon,
 } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
@@ -27,6 +28,8 @@ import { CommentComposer, DeleteCommentButton, ResolveButton } from "@/component
 import { PinLayer, PinMark } from "@/components/deliverable/pin-layer";
 import { CompareSlider } from "@/components/deliverable/compare-slider";
 import { ChecklistCard } from "@/components/deliverable/checklist-card";
+import { NudgeClient } from "@/components/deliverable/nudge-client";
+import { getClientSpace } from "@/lib/data/clients";
 import { aiAllowance, getLatestChecklist } from "@/lib/data/checklists";
 import { initials } from "@/components/initials";
 import { getWorkspaceContext } from "@/lib/data/workspace";
@@ -66,6 +69,8 @@ async function Deliverable({
     ws.isTeam ? getLatestChecklist(ws.id, deliverableId) : Promise.resolve(null),
     ws.isTeam ? aiAllowance(ws) : Promise.resolve({ limit: 0, used: 0, left: 0 }),
   ]);
+  // Who a nudge is addressed to: the people in this client's space.
+  const clientPeople = ws.isTeam && d.status === "in_review" ? ((await getClientSpace(ws.id, d.client.id))?.people ?? []) : [];
 
   const audience = ws.isTeam ? "team" : "client";
   const latest = d.versions[0] ?? null;
@@ -139,6 +144,15 @@ async function Deliverable({
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
               <StatusBadge status={d.status} audience={audience} />
               {latest && <span className="tabular">Version {latest.version}</span>}
+              {d.reviews.some((r) => r.decision === "approved") && (
+                <Link
+                  href={`/print/${slug}/sign-off/${d.id}`}
+                  className="inline-flex items-center gap-1 rounded font-medium text-foreground underline underline-offset-4 outline-none hover:text-foreground/70 focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <SealCheckIcon className="size-4 text-status-approved" aria-hidden="true" />
+                  Sign-off sheet
+                </Link>
+              )}
               {due && (
                 <span className={cn("inline-flex items-center gap-1", due.tone === "overdue" && "text-destructive")}>
                   <CalendarDotsIcon className="size-4" aria-hidden="true" />
@@ -148,18 +162,32 @@ async function Deliverable({
             </div>
           </div>
           {ws.isTeam && (
-            <TeamActions
-              slug={slug}
-              deliverableId={d.id}
-              title={d.title}
-              description={d.description}
-              dueOn={d.dueOn}
-              status={d.status}
-              hasVersions={d.versions.length > 0}
-              nextVersion={(latest?.version ?? 0) + 1}
-              clientName={d.client.name}
-              isDemo={ws.isDemo}
-            />
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              {d.status === "in_review" && latest && (
+                <NudgeClient
+                  slug={slug}
+                  deliverableId={d.id}
+                  title={d.title}
+                  version={latest.version}
+                  versionId={latest.id}
+                  dueLabel={due?.label ?? null}
+                  overdue={due?.tone === "overdue"}
+                  names={clientPeople.map((p) => p.name.split(" ")[0]).slice(0, 2)}
+                />
+              )}
+              <TeamActions
+                slug={slug}
+                deliverableId={d.id}
+                title={d.title}
+                description={d.description}
+                dueOn={d.dueOn}
+                status={d.status}
+                hasVersions={d.versions.length > 0}
+                nextVersion={(latest?.version ?? 0) + 1}
+                clientName={d.client.name}
+                isDemo={ws.isDemo}
+              />
+            </div>
           )}
         </div>
         {d.description && <p className="max-w-2xl text-sm whitespace-pre-line text-muted-foreground">{d.description}</p>}

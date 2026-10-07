@@ -7,6 +7,7 @@ export type ActivityItem = {
   action: string;
   createdAt: string;
   actorName: string;
+  actorId: string | null;
   clientId: string | null;
   clientName: string | null;
   deliverableId: string | null;
@@ -17,7 +18,7 @@ export type ActivityItem = {
 /** Recent activity, already filtered by RLS (clients only receive client-visible events from their space). */
 export async function getActivity(
   workspaceId: string,
-  opts: { clientId?: string; deliverableId?: string; limit?: number } = {},
+  opts: { clientId?: string; deliverableId?: string; limit?: number; excludeActor?: string } = {},
 ): Promise<ActivityItem[]> {
   const supabase = await createClient();
   let query = supabase
@@ -28,6 +29,8 @@ export async function getActivity(
     .limit(opts.limit ?? 15);
   if (opts.clientId) query = query.eq("client_id", opts.clientId);
   if (opts.deliverableId) query = query.eq("deliverable_id", opts.deliverableId);
+  // Nobody needs to be told about what they did themselves.
+  if (opts.excludeActor) query = query.or(`actor_id.is.null,actor_id.neq.${opts.excludeActor}`);
 
   const { data, error } = await query;
   if (error) throw error;
@@ -44,6 +47,7 @@ export async function getActivity(
     action: a.action,
     createdAt: a.created_at,
     actorName: (a.actor_id && names.get(a.actor_id)) || "Someone",
+    actorId: a.actor_id,
     clientId: a.client_id,
     clientName: a.client?.name ?? null,
     deliverableId: a.deliverable_id,

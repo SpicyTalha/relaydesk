@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TeamSidebar } from "@/components/shell/team-sidebar";
 import { UserMenu } from "@/components/shell/user-menu";
+import { CommandMenu } from "@/components/shell/command-menu";
+import { NotificationBell } from "@/components/shell/notification-bell";
 import { DemoBanner } from "@/components/shell/demo-banner";
 import { SuspendedBanner } from "@/components/shell/suspended-banner";
 import { LogoMark } from "@/components/brand/logo";
@@ -49,7 +51,11 @@ async function Shell({ params, children }: { params: Promise<{ slug: string }>; 
                 <p className="truncate text-xs text-muted-foreground">with {ws.name}</p>
               </div>
             </Link>
-            <UserMenu name={profile.fullName} email={profile.email} />
+            <div className="flex items-center gap-2">
+              <CommandMenu slug={slug} audience="client" isOwner={false} />
+              <NotificationBell slug={slug} />
+              <UserMenu name={profile.fullName} email={profile.email} />
+            </div>
           </div>
         </header>
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:py-8">{children}</main>
@@ -84,7 +90,9 @@ async function Shell({ params, children }: { params: Promise<{ slug: string }>; 
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-1 h-5 md:hidden" />
           <span className="truncate text-sm font-medium md:hidden">{ws.name}</span>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <CommandMenu slug={slug} audience="team" isOwner={ws.isOwner} />
+            <NotificationBell slug={slug} />
             <UserMenu name={profile.fullName} email={profile.email} />
           </div>
         </header>
