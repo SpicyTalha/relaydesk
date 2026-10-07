@@ -66,7 +66,10 @@ export async function generateChecklist(input: { slug: string; deliverableId: st
     const message = err instanceof Error ? err.message : String(err);
     console.error("Checklist generation failed:", message);
     // Vercel AI Gateway won't serve requests until the account owner adds a card (it unlocks the free credits).
-    if (/credit card|customer_verification/i.test(message)) return { ok: false, error: "AI isn't switched on for this site yet. Nothing was used up." };
+    if (/credit card|customer_verification|api key|API_KEY_INVALID|PERMISSION_DENIED/i.test(message))
+      return { ok: false, error: "AI isn't switched on for this site yet. Nothing was used up." };
+    // Gemini's free tier allows a set number of requests a minute and a day.
+    if (/quota|rate limit|RESOURCE_EXHAUSTED|429/i.test(message)) return { ok: false, error: "The AI is busy right now. Nothing was used up; try again in a minute." };
     return { ok: false, error: "The AI couldn't write a checklist just now. Nothing was used up; try again in a minute." };
   }
   if (!draft.items.length) return { ok: false, error: "The notes didn't ask for any changes, so there's nothing to check off." };

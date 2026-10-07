@@ -82,8 +82,11 @@ test("the studio turns the client's notes into a checklist and ticks it off", as
   await expect(card.getByText(/^0 of \d+ done$/)).toBeVisible();
   await expect(card.getByText(/2 of 3 left this month/)).toBeVisible();
 
+  // The tick shows at once; wait for it to be saved before reloading.
+  const saved = page.waitForResponse((r) => r.request().method() === "POST" && r.ok());
   await card.getByRole("checkbox").first().click();
   await expect(card.getByText(/^1 of \d+ done$/)).toBeVisible();
+  await saved;
   await page.reload();
   await expect(card.getByText(/^1 of \d+ done$/)).toBeVisible();
 });

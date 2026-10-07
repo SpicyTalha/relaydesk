@@ -16,6 +16,7 @@
     "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.90",
     "@gsap/react": "2.1.2",
     "@number-flow/react": "0.6.2",
     "@phosphor-icons/react": "2.1.10",

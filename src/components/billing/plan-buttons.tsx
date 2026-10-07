@@ -6,7 +6,7 @@ import { ArrowSquareOutIcon, CheckCircleIcon, CreditCardIcon } from "@phosphor-i
 import { SubmitButton } from "@/components/submit-button";
 import { Spinner } from "@/components/ui/spinner";
 import { initialFormState } from "@/lib/form-state";
-import { openPortal, startCheckout } from "@/lib/actions/billing";
+import { openPortal, startCheckout, syncBilling } from "@/lib/actions/billing";
 
 export function UpgradeButton({ slug, plan, label }: { slug: string; plan: "pro" | "studio"; label: string }) {
   const [state, action] = useActionState(startCheckout, initialFormState);
@@ -38,16 +38,19 @@ export function ManageBillingButton({ slug }: { slug: string }) {
 }
 
 /**
- * After Checkout, the plan changes only when Stripe's webhook arrives (usually within seconds).
- * Re-fetch the page every 2 seconds until the server shows the new plan, for up to 40 seconds.
+ * Back from Checkout: ask Stripe for the subscription straight away (syncBilling), then re-fetch
+ * the page every 2 seconds until it shows the new plan, for up to 40 seconds. The webhook confirms
+ * the same state independently.
  */
-export function ConfirmingPlan({ confirmed, planName }: { confirmed: boolean; planName: string }) {
+export function ConfirmingPlan({ confirmed, planName, slug }: { confirmed: boolean; planName: string; slug: string }) {
   const router = useRouter();
   const [timedOut, setTimedOut] = useState(false);
   const tries = useRef(0);
 
   useEffect(() => {
     if (confirmed) return;
+    let cancelled = false;
+    void syncBilling({ slug, reason: "checkout_return" }).then(() => !cancelled && router.refresh());
     const timer = setInterval(() => {
       tries.current += 1;
       if (tries.current > 20) {
@@ -57,8 +60,11 @@ export function ConfirmingPlan({ confirmed, planName }: { confirmed: boolean; pl
       }
       router.refresh();
     }, 2000);
-    return () => clearInterval(timer);
-  }, [confirmed, router]);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [confirmed, router, slug]);
 
   if (confirmed) {
     return (
@@ -80,4 +86,16 @@ export function ConfirmingPlan({ confirmed, planName }: { confirmed: boolean; pl
       </span>
     </div>
   );
+}
+
+/** Back from the billing portal (plan change, cancellation): pull the new state once, then tidy the URL. */
+export function SyncOnPortalReturn({ slug }: { slug: string }) {
+  const router = useRouter();
+  useEffect(() => {
+    void syncBilling({ slug, reason: "portal_return" }).then(() => {
+      router.replace(`/w/${slug}/billing`, { scroll: false });
+      router.refresh();
+    });
+  }, [router, slug]);
+  return null;
 }

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CheckCircleIcon, ClockIcon, FolderPlusIcon, PaperPlaneTiltIcon, PencilLineIcon, UploadSimpleIcon, UserPlusIcon, WarningIcon } from "@phosphor-icons/react/ssr";
+import { CheckCircleIcon, CheckIcon, ClockIcon, FolderPlusIcon, PaperPlaneTiltIcon, PencilLineIcon, UploadSimpleIcon, UserPlusIcon, WarningIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,6 +16,7 @@ import { countApprovedSince, getOpenDeliverables } from "@/lib/data/deliverables
 import { getActivity } from "@/lib/data/activity";
 import { dueInfo, firstName } from "@/lib/format";
 import { currentTime } from "@/lib/now";
+import { getSetupProgress, type SetupProgress } from "@/lib/data/setup";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -39,8 +41,10 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
     countApprovedSince(ws.id, 30),
     getActivity(ws.id, { limit: 12 }),
   ]);
+  // Real studios see the setup checklist until the first client is invited; demo copies start finished.
+  const setup = ws.isDemo ? null : await getSetupProgress(ws.id, slug);
 
-  if (clients.length === 0) return <GettingStarted slug={slug} name={profile.fullName} />;
+  if (clients.length === 0) return <GettingStarted slug={slug} name={profile.fullName} setup={setup} />;
 
   const waiting = open.filter((d) => d.status === "in_review");
   const changes = open.filter((d) => d.status === "changes_requested");
@@ -66,6 +70,20 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
         description="Here's what's moving across your clients."
         actions={<AddClientDialog slug={slug} />}
       />
+
+      {setup && setup.done < setup.steps.length && (
+        <section aria-labelledby="setup-title" className="mb-10 rounded-2xl border border-ink bg-card p-5 shadow-[5px_5px_0_var(--color-process-yellow)] sm:p-6">
+          <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="setup-title" className="font-display text-xl font-extrabold tracking-[-0.02em]">
+              Finish setting up
+            </h2>
+            <p className="text-sm text-muted-foreground tabular">
+              {setup.done} of {setup.steps.length} done
+            </p>
+          </div>
+          <SetupSteps slug={slug} setup={setup} compact />
+        </section>
+      )}
 
       <dl className="mb-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map((s) => (
@@ -135,45 +153,68 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
   );
 }
 
-function GettingStarted({ slug, name }: { slug: string; name: string }) {
-  const steps = [
-    { icon: FolderPlusIcon, title: "Add your first client", body: "Each client gets a private space that only they and your team can see." },
-    { icon: UploadSimpleIcon, title: "Upload a deliverable", body: "Logos, ads, PDFs, videos. Every upload becomes a new version." },
-    { icon: PaperPlaneTiltIcon, title: "Ask for approval", body: "Your client approves or asks for changes, from any device." },
-    { icon: UserPlusIcon, title: "Invite your client", body: "Send them a link. They only ever see their own work." },
-  ];
+function GettingStarted({ slug, name, setup }: { slug: string; name: string; setup: SetupProgress | null }) {
   return (
     <div className="mx-auto max-w-2xl py-6">
       <PageHeader title={`Welcome, ${firstName(name)}`} description="Four steps and your first approval is on its way." />
-      <ol className="space-y-3">
-        {steps.map((s, i) => (
+      <SetupSteps slug={slug} setup={setup} />
+    </div>
+  );
+}
+
+const STEPS = {
+  client: { icon: FolderPlusIcon, title: "Add your first client", body: "Each client gets a private space that only they and your team can see.", cta: null },
+  upload: { icon: UploadSimpleIcon, title: "Upload a deliverable", body: "Logos, ads, PDFs, videos. Every upload becomes a new version.", cta: "Open the client and add a deliverable" },
+  approval: { icon: PaperPlaneTiltIcon, title: "Ask for approval", body: "Set a due date; your client approves or asks for changes, from any device.", cta: "Open it and ask for approval" },
+  invite: { icon: UserPlusIcon, title: "Invite your client", body: "Send them a link. They only ever see their own work.", cta: "Invite them from their space" },
+} as const;
+
+/** The four steps to a first approval, ticked off from what the studio has really done. */
+function SetupSteps({ slug, setup, compact = false }: { slug: string; setup: SetupProgress | null; compact?: boolean }) {
+  const steps = setup?.steps ?? (["client", "upload", "approval", "invite"] as const).map((key) => ({ key, done: false, href: null }));
+  const current = steps.findIndex((s) => !s.done);
+  return (
+    <ol className={cn("gap-3", compact ? "grid sm:grid-cols-2 lg:grid-cols-4" : "space-y-3")}>
+      {steps.map((step, i) => {
+        const s = STEPS[step.key];
+        const isCurrent = i === current;
+        return (
           <li
-            key={s.title}
-            aria-current={i === 0 ? "step" : undefined}
-            className={cn("flex gap-4 rounded-xl border bg-card p-4", i === 0 && "border-ink shadow-[0_14px_30px_-22px_rgb(21_23_26/0.6)]")}
+            key={step.key}
+            aria-current={isCurrent ? "step" : undefined}
+            className={cn(
+              "flex gap-3 rounded-xl border bg-card p-4",
+              isCurrent && "border-ink shadow-[0_14px_30px_-22px_rgb(21_23_26/0.6)]",
+              step.done && "bg-muted/40",
+            )}
           >
             <span
               className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-full text-sm font-semibold tabular",
-                i === 0 ? "bg-process-yellow text-ink ring-2 ring-ink" : "border text-muted-foreground",
+                "grid size-8 shrink-0 place-items-center rounded-full text-sm font-semibold tabular",
+                step.done ? "bg-status-approved text-white" : isCurrent ? "bg-process-yellow text-ink ring-2 ring-ink" : "border text-muted-foreground",
               )}
             >
-              {i + 1}
+              {step.done ? <CheckIcon weight="bold" className="size-4" aria-label="Done" /> : i + 1}
             </span>
             <div className="min-w-0 flex-1">
-              <p className={cn("font-medium", i > 0 && "text-foreground/70")}>{s.title}</p>
-              <p className="text-sm text-muted-foreground">{s.body}</p>
-              {i === 0 && (
+              <p className={cn("font-medium", step.done && "text-muted-foreground line-through", !step.done && !isCurrent && "text-foreground/70")}>{s.title}</p>
+              {!compact && <p className="text-sm text-muted-foreground">{s.body}</p>}
+              {isCurrent && step.key === "client" && (
                 <div className="mt-3">
                   <AddClientDialog slug={slug} />
                 </div>
               )}
+              {isCurrent && step.href && s.cta && (
+                <Link href={step.href} className="mt-2 inline-block text-sm font-semibold underline underline-offset-4 hover:text-foreground/70">
+                  {s.cta}
+                </Link>
+              )}
             </div>
-            <s.icon className="mt-1 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+            {!compact && <s.icon className="mt-1 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />}
           </li>
-        ))}
-      </ol>
-    </div>
+        );
+      })}
+    </ol>
   );
 }
 

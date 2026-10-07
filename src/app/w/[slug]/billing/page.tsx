@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { SignupSteps, parsePaidPlan } from "@/components/auth/signup-steps";
-import { ConfirmingPlan, ManageBillingButton, UpgradeButton } from "@/components/billing/plan-buttons";
+import { ConfirmingPlan, ManageBillingButton, SyncOnPortalReturn, UpgradeButton } from "@/components/billing/plan-buttons";
 import { getWorkspaceContext } from "@/lib/data/workspace";
 import { getBilling } from "@/lib/data/billing";
 import { PLANS, planById } from "@/lib/billing/plans";
@@ -94,7 +94,8 @@ async function Billing({
         </section>
       )}
 
-      {query.checkout === "success" && <ConfirmingPlan confirmed={ws.plan !== "free"} planName={current.name} />}
+      {query.checkout === "success" && <ConfirmingPlan confirmed={ws.plan !== "free"} planName={current.name} slug={slug} />}
+      {query.portal === "return" && <SyncOnPortalReturn slug={slug} />}
       {query.checkout === "canceled" && (
         <p role="status" className="rounded-xl border bg-muted/40 p-4 text-sm">
           Checkout was canceled. Nothing was charged.

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@ai-sdk/google':
+        specifier: ^4.0.90
+        version: 4.0.90(zod@4.6.5)
       '@gsap/react':
         specifier: 2.1.2
         version: 2.1.2(gsap@3.15.0)(react@19.3.0)
@@ -113,6 +116,12 @@ packages:
 
   '@ai-sdk/gateway@4.0.106':
     resolution: {integrity: sha512-NprSdFzyVnbEp2SDWtIgsCFIUHFCehOD9S6FQkF/dLrCmnke8w4SOK3KcmUUiEbwtVzlUF8prkaELp+ohcQaQw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/google@4.0.90':
+    resolution: {integrity: sha512-XQNKWT6CwcgARdqTUZn0j89y0gvDMR0k2j2qhOg7ffoL+6MNViQ9t3ALoleAAKo10yMLFE7Ato0Fk+RD14i2kg==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -3881,6 +3890,12 @@ snapshots:
       '@ai-sdk/provider': 4.0.24
       '@ai-sdk/provider-utils': 5.0.56(zod@4.6.5)
       '@vercel/oidc': 3.2.0
+      zod: 4.6.5
+
+  '@ai-sdk/google@4.0.90(zod@4.6.5)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.24
+      '@ai-sdk/provider-utils': 5.0.56(zod@4.6.5)
       zod: 4.6.5
 
   '@ai-sdk/provider-utils@5.0.56(zod@4.6.5)':

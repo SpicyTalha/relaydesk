@@ -8,6 +8,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getWorkspaceContext } from "@/lib/data/workspace";
 import { CHECKOUT_INTEGRATION_ID, stripe } from "@/lib/stripe";
 import { planById } from "@/lib/billing/plans";
+import { syncWorkspaceSubscription } from "@/lib/billing/sync";
 import type { FormState } from "@/lib/form-state";
 
 const ACTIVE = new Set(["active", "trialing", "past_due"]);
@@ -104,7 +105,7 @@ async function openPortalFor(workspaceId: string, slug: string): Promise<FormSta
   try {
     const session = await stripe().billingPortal.sessions.create({
       customer: data.stripe_customer_id,
-      return_url: `${await origin()}/w/${slug}/billing`,
+      return_url: `${await origin()}/w/${slug}/billing?portal=return`,
       configuration: process.env.STRIPE_PORTAL_CONFIGURATION || undefined,
     });
     url = session.url;
@@ -120,4 +121,18 @@ export async function openPortal(_prev: FormState, formData: FormData): Promise<
   const ws = await getWorkspaceContext(slug);
   if (!ws.isOwner) return { error: "Only owners can manage billing." };
   return openPortalFor(ws.id, slug);
+}
+
+/** Pulls the subscription from Stripe on return from Checkout or the portal, so the plan is right at once. */
+export async function syncBilling(input: { slug: string; reason: "checkout_return" | "portal_return" }): Promise<{ ok: boolean }> {
+  const ws = await getWorkspaceContext(input.slug);
+  if (!ws.isOwner || !["checkout_return", "portal_return"].includes(input.reason)) return { ok: false };
+  try {
+    await syncWorkspaceSubscription(ws.id, input.reason);
+    return { ok: true };
+  } catch (err) {
+    // The webhook will still arrive; the page keeps checking.
+    console.error("billing sync failed", err);
+    return { ok: false };
+  }
 }

@@ -1,9 +1,15 @@
 import "server-only";
 import { generateText, Output } from "ai";
+import { google } from "@ai-sdk/google";
 import { z } from "zod";
 
-/** Through Vercel AI Gateway: authenticated by the deployment's OIDC token, or AI_GATEWAY_API_KEY locally. */
-export const CHECKLIST_MODEL = process.env.RELAYDESK_AI_MODEL ?? "anthropic/claude-haiku-4.5";
+/**
+ * Google Gemini on its free tier when GOOGLE_GENERATIVE_AI_API_KEY is set (no card needed). Otherwise
+ * Vercel AI Gateway, which needs a card on the Vercel account. Turning notes into tasks is a small job,
+ * so a "lite" model is plenty. RELAYDESK_AI_MODEL overrides either default.
+ */
+const USE_GEMINI = !!process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+export const CHECKLIST_MODEL = process.env.RELAYDESK_AI_MODEL ?? (USE_GEMINI ? "gemini-3.5-flash-lite" : "anthropic/claude-haiku-4.5");
 
 /** A client note: a comment (its id) or the note on a "request changes" decision (id "review:<id>"). */
 export type Feedback = { id: string; text: string; pin: number | null };
@@ -36,7 +42,7 @@ export async function draftChecklist(title: string, feedback: Feedback[]): Promi
 
   const notes = feedback.map((f) => `<note id="${f.id}"${f.pin ? ` pin="${f.pin}"` : ""}>${f.text}</note>`).join("\n");
   const { output } = await generateText({
-    model: CHECKLIST_MODEL,
+    model: USE_GEMINI ? google(CHECKLIST_MODEL) : CHECKLIST_MODEL,
     output: Output.object({ schema }),
     system:
       "You turn a client's review notes on a design into a short revision checklist for the designer. " +
@@ -49,7 +55,7 @@ export async function draftChecklist(title: string, feedback: Feedback[]): Promi
   const items = output.items
     .filter((i) => byId.has(i.source) && i.task.trim())
     .map((i) => ({ body: i.task.trim().slice(0, 300), commentId: commentIdOf(i.source), quote: byId.get(i.source)!.text.slice(0, 600) }));
-  return { model: CHECKLIST_MODEL, items };
+  return { model: USE_GEMINI ? `google/${CHECKLIST_MODEL}` : CHECKLIST_MODEL, items };
 }
 
 function firstSentence(text: string) {

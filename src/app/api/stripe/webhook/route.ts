@@ -1,10 +1,11 @@
 import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { stripe } from "@/lib/stripe";
-import { planByLookupKey } from "@/lib/billing/plans";
+import { applySubscription } from "@/lib/billing/sync";
 
 /**
- * Stripe webhook: the only code path that changes a workspace's plan.
+ * Stripe webhook: the main path that changes a workspace's plan (lib/billing/sync.ts also pulls
+ * the current state from Stripe when someone returns from Checkout or the portal).
  *
  * 1. Verify the signature against the raw body (never parse JSON first).
  * 2. Re-fetch the subscription from Stripe instead of trusting the event payload, so events
@@ -22,9 +23,6 @@ const SUBSCRIPTION_EVENTS = new Set([
   "invoice.payment_failed",
 ]);
 const RISK_EVENTS = new Set(["charge.dispute.created", "charge.refunded", "radar.early_fraud_warning.created"]);
-
-// Paid statuses keep the paid plan. past_due keeps it during Stripe's retry window.
-const PAID_STATUSES = new Set(["active", "trialing", "past_due"]);
 
 export async function POST(request: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -76,24 +74,7 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
   if (!subscriptionId) return record(event, "ignored", "No subscription on this event");
 
   const sub = await stripe().subscriptions.retrieve(subscriptionId, { expand: ["items.data.price"] });
-  const item = sub.items.data[0];
-  const plan = PAID_STATUSES.has(sub.status) ? (planByLookupKey(item?.price.lookup_key)?.id ?? "free") : "free";
-  const customer = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
-
-  const { data, error } = await createAdminClient().rpc("apply_stripe_subscription", {
-    p_event_id: event.id,
-    p_event_type: event.type,
-    p_event_created: new Date(event.created * 1000).toISOString(),
-    p_customer: customer,
-    p_subscription: sub.id,
-    p_status: sub.status,
-    p_plan: plan,
-    p_lookup_key: item?.price.lookup_key ?? undefined,
-    p_period_end: item?.current_period_end ? new Date(item.current_period_end * 1000).toISOString() : undefined,
-    p_cancel_at_period_end: sub.cancel_at_period_end,
-  });
-  if (error) throw error;
-  return data;
+  return applySubscription(sub, { id: event.id, type: event.type, created: new Date(event.created * 1000) });
 }
 
 async function handleRiskEvent(event: Stripe.Event) {
