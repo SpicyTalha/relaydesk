@@ -26,7 +26,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         <main className="flex flex-1 items-start justify-center px-5 pt-10 pb-12 sm:px-10 lg:items-center lg:pt-6">
           <div className="w-full max-w-[25rem]">{children}</div>
         </main>
-        <p className="px-5 pb-6 text-xs text-ink/50 sm:px-10">Sample project. Fictional companies and data. Payments run in Stripe test mode.</p>
+        <p className="px-5 pb-6 text-xs text-ink/65 sm:px-10">Sample project. Fictional companies and data. Payments run in Stripe test mode.</p>
       </div>
       <OnTheMat />
     </div>

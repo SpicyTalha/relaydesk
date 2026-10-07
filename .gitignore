@@ -51,3 +51,6 @@ next-env.d.ts
 
 # Local scratch scripts
 /scripts/.*
+
+# Launch video working files (frames, stems); the finished video is copied to gallery/out
+/brag-output/

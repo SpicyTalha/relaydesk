@@ -27,12 +27,12 @@ export function SignupSteps({ current, paid }: { current: 1 | 2 | 3; paid: boole
                 "grid size-6 place-items-center rounded-full text-xs tabular",
                 state === "done" && "bg-ink text-paper",
                 state === "current" && "bg-process-yellow text-ink ring-2 ring-ink",
-                state === "todo" && "border border-ink/20 text-ink/45",
+                state === "todo" && "border border-ink/25 text-ink/60",
               )}
             >
               {state === "done" ? <CheckIcon weight="bold" className="size-3.5" aria-hidden="true" /> : n}
             </span>
-            <span className={cn(state === "todo" && "text-ink/45")}>
+            <span className={cn(state === "todo" && "text-ink/60")}>
               {label}
               {state === "done" && <span className="sr-only"> (done)</span>}
             </span>

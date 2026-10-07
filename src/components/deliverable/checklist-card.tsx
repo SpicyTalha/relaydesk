@@ -111,7 +111,7 @@ export function ChecklistCard({
                         className="flex gap-1.5 rounded-sm border-l-2 border-pen pl-2 text-xs text-muted-foreground italic outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                       >
                         {item.commentId && pins[item.commentId] && <PinMark n={pins[item.commentId]} small />}
-                        <span className="line-clamp-2">&ldquo;{item.quote}&rdquo;</span>
+                        <span className="line-clamp-2 pr-1.5">&ldquo;{item.quote}&rdquo;</span>
                       </a>
                     )}
                   </div>

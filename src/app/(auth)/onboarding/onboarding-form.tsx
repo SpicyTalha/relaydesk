@@ -50,7 +50,7 @@ export function OnboardingForm({ heading }: { heading: React.ReactNode }) {
 
         {/* A live look at the header every client sees, so the name's job is obvious. */}
         <figure className="rounded-2xl border border-dashed border-ink/20 p-3">
-          <figcaption className="px-1 pb-2 text-xs font-semibold text-ink/55">What your clients see</figcaption>
+          <figcaption className="px-1 pb-2 text-xs font-semibold text-ink/65">What your clients see</figcaption>
           <div aria-hidden="true" className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-[0_10px_24px_-18px_rgb(21_23_26/0.5)]">
             <LogoMark className="size-8 shrink-0" />
             <div className="min-w-0">

@@ -220,7 +220,7 @@ export default function LandingPage() {
                         </div>
                         <p className="flex items-baseline gap-1.5">
                           <span className="font-display text-7xl leading-none font-extrabold tracking-[-0.05em] tabular">${p.price}</span>
-                          <span className="text-sm font-semibold opacity-80">/ month</span>
+                          <span className="text-sm font-semibold">/ month</span>
                         </p>
                       </div>
                       <div className="flex flex-1 flex-col p-5">
@@ -239,7 +239,7 @@ export default function LandingPage() {
                                 {f}
                               </li>
                             ) : (
-                              <li key="no-ai" className="flex gap-2.5 text-ink/45">
+                              <li key="no-ai" className="flex gap-2.5 text-ink/65">
                                 <MinusIcon weight="bold" className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
                                 No AI checklists
                               </li>
@@ -249,7 +249,7 @@ export default function LandingPage() {
                         <Button className="mt-6 h-11 rounded-full text-[15px]" variant={p.id === "pro" ? "default" : "outline"} asChild>
                           <Link href={paid ? `/signup?plan=${p.id}` : "/signup"}>{paid ? `Start with ${p.name}` : "Start free"}</Link>
                         </Button>
-                        <p className="mt-2.5 text-center text-xs text-ink/55">{paid ? "Set up your studio, then check out." : "No card needed."}</p>
+                        <p className="mt-2.5 text-center text-xs text-ink/70">{paid ? "Set up your studio, then check out." : "No card needed."}</p>
                       </div>
                     </div>
                   </div>

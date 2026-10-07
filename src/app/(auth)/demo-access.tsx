@@ -14,7 +14,7 @@ export function DemoAccess({ next }: { next?: string }) {
 
   return (
     <div className="space-y-4">
-      <FieldSeparator className="mt-0 mb-4 text-ink/55">or explore the demo, no account needed</FieldSeparator>
+      <FieldSeparator className="mt-0 mb-4 text-ink/65">or explore the demo, no account needed</FieldSeparator>
       <form action={action} className="grid grid-cols-2 gap-2">
         <SubmitButton variant="outline" name="as" value="owner" pendingText="Preparing" className="h-11 rounded-full bg-white">
           <BuildingsIcon />
@@ -26,7 +26,7 @@ export function DemoAccess({ next }: { next?: string }) {
         </SubmitButton>
       </form>
       {state.error && <p className="text-center text-sm text-destructive">{state.error}</p>}
-      <p className="text-center text-xs text-ink/55">
+      <p className="text-center text-xs text-ink/65">
         Your own private copy with sample data, deleted after 24 hours.
       </p>
     </div>
