@@ -182,14 +182,14 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* PRICING: swatch chips on a press sheet, printer's marks in the margins. */}
-        <section id="pricing" aria-labelledby="pricing-title" className="scroll-mt-10 px-3 py-24 sm:px-5">
-          <div className="relative mx-auto max-w-6xl bg-white px-6 pt-20 pb-20 shadow-[0_2px_0_rgb(0_0_0/0.03),0_40px_80px_-40px_rgb(21_23_26/0.45)] sm:px-16">
-            <ColorBar className="absolute top-6 left-6 sm:left-16" />
-            <Loupe className="-top-16 right-28 hidden scale-90 lg:block" />
-            <RegMark className="top-1/2 left-4 hidden -translate-y-1/2 sm:block" />
-            <RegMark className="top-1/2 right-4 hidden -translate-y-1/2 sm:block" />
-            <CropMarks className="inset-x-12 top-14 bottom-12 hidden sm:block" />
+        {/* PRICING: the whole section is a press sheet, edge to edge like the other fields; printer's marks live in the margins. */}
+        <section id="pricing" aria-labelledby="pricing-title" className="relative scroll-mt-10 overflow-hidden bg-white pt-36 pb-24">
+          <ColorBar className="absolute top-8 left-5 sm:left-10" />
+          <Loupe className="top-0 left-[15.5rem] hidden scale-75 xl:block" />
+          <RegMark className="top-1/2 left-3 hidden -translate-y-1/2 lg:block" />
+          <RegMark className="top-1/2 right-3 hidden -translate-y-1/2 lg:block" />
+          <CropMarks className="inset-x-10 top-16 bottom-14 hidden lg:block" />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-10 lg:px-14">
 
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-end">
               <h2 id="pricing-title" className="font-display text-[clamp(2.6rem,5vw,4.6rem)] leading-[0.92] font-extrabold tracking-[-0.05em]">
@@ -200,7 +200,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="mt-24 grid gap-16 md:grid-cols-3 md:gap-6 lg:gap-10">
+            <div className="mt-24 grid gap-16 md:grid-cols-3 md:gap-6 lg:gap-12 xl:gap-16">
               {PLANS.map((p, i) => {
                 const chip = CHIPS[i];
                 const paid = p.price > 0;
@@ -208,8 +208,8 @@ export default function LandingPage() {
                   <div key={p.id} className={cn("relative flex flex-col", chip.tilt)}>
                     {p.id === "pro" && (
                       <>
-                        <PenArrow className="-top-12 -right-5 z-10 hidden w-24 rotate-[140deg] md:block" />
-                        <PenNote className="-top-[4.5rem] -right-2 z-10 rotate-[4deg] text-[1.7rem] md:-right-16">start here with 3+ clients</PenNote>
+                        <PenArrow className="-top-[3.75rem] left-[6.2rem] z-10 hidden w-24 rotate-[150deg] lg:block" />
+                        <PenNote className="-top-16 right-1 z-10 rotate-[3deg] text-[1.45rem] whitespace-nowrap lg:-top-[4.5rem] lg:right-auto lg:left-[10.5rem] lg:rotate-[4deg] lg:text-[1.7rem]">start here with 3+ clients</PenNote>
                       </>
                     )}
                     <div className="flex flex-1 flex-col overflow-hidden rounded-[6px] bg-white shadow-[0_0_0_1px_rgb(21_23_26/0.08),0_24px_44px_-26px_rgb(21_23_26/0.55)] transition-transform duration-300 hover:-translate-y-1.5">
@@ -269,12 +269,12 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            <p aria-hidden="true" className="absolute right-6 bottom-4 left-6 flex justify-between gap-4 text-[11px] font-semibold tracking-[0.06em] text-ink/40 uppercase sm:right-16 sm:left-16">
+          </div>
+          <p aria-hidden="true" className="absolute right-5 bottom-5 left-5 flex justify-between gap-4 text-[11px] font-semibold tracking-[0.06em] text-ink/40 uppercase sm:right-10 sm:left-10">
               <span>relaydesk-pricing.pdf</span>
               <span className="hidden sm:inline">Press proof, sheet 1 of 1</span>
               <span>C M Y K</span>
             </p>
-          </div>
         </section>
 
         {/* UNDER THE HOOD: a print-shop job ticket. */}
