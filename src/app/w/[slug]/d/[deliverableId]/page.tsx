@@ -383,6 +383,13 @@ async function Deliverable({
               checklistVersion={checklist ? (d.versions.find((v) => v.id === checklist.versionId)?.version ?? null) : null}
               latestVersion={latest.version}
               openNotes={openNotes}
+              hasNewNotes={
+                !!checklist &&
+                [
+                  ...comments.filter((c) => !c.deleted && !c.resolvedAt && c.versionId === latest.id && (c.authorIsClient || c.pin)).map((c) => c.createdAt),
+                  ...d.reviews.filter((r) => r.decision === "changes_requested" && r.versionId === latest.id).map((r) => r.createdAt),
+                ].some((at) => at > checklist.createdAt)
+              }
               allowance={allowance}
               pins={Object.fromEntries(pinNo)}
               billingHref={ws.isOwner ? `/w/${slug}/billing` : null}

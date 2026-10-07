@@ -72,6 +72,13 @@ export async function createSandbox(ipHash: string) {
     const { error: pinError } = await admin.rpc("seed_demo_pins", { p_workspace: result.workspace_id });
     if (pinError) throw pinError;
 
+    // A lived-in history, not a wall of unread: each demo person has "seen" everything older than a day and a half.
+    const seenAt = new Date(Date.now() - 36 * 3_600_000).toISOString();
+    const { error: readsError } = await admin
+      .from("notification_reads")
+      .insert(Object.values(users).map((u) => ({ user_id: u.id, workspace_id: result.workspace_id, seen_at: seenAt })));
+    if (readsError) throw readsError;
+
     // Server-side copies inside Storage: nothing is downloaded or re-uploaded.
     await Promise.all(
       result.copies.map(async (c) => {

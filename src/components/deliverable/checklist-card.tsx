@@ -25,6 +25,7 @@ export function ChecklistCard({
   checklistVersion,
   latestVersion,
   openNotes,
+  hasNewNotes,
   allowance,
   pins,
   billingHref,
@@ -35,6 +36,8 @@ export function ChecklistCard({
   checklistVersion: number | null;
   latestVersion: number;
   openNotes: number;
+  /** Client notes newer than the latest checklist: the only reason to make a fresh one. */
+  hasNewNotes: boolean;
   allowance: { limit: number; left: number };
   /** Pin numbers by comment id, so items can point at the pin they came from. */
   pins: Record<string, number>;
@@ -127,7 +130,7 @@ export function ChecklistCard({
 
         {allowance.limit > 0 && (
           <div className="space-y-2 border-t pt-3">
-            {(!checklist || stale || openNotes > 0) && (
+            {(!checklist || stale || hasNewNotes) && (
               <Button size="sm" className="w-full" variant={checklist ? "outline" : "default"} disabled={!canMake || making} onClick={make}>
                 {making ? <Spinner /> : <SparkleIcon weight="fill" />}
                 {making ? "Reading the notes" : checklist ? "Make a fresh checklist" : "Make a checklist"}

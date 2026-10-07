@@ -66,7 +66,8 @@ async function Overview({ params }: { params: Promise<{ slug: string }> }) {
   return (
     <div className="mx-auto max-w-6xl">
       <PageHeader
-        title={`Welcome back, ${firstName(profile.fullName)}`}
+        // "Back" only once they've been here a while: a studio still setting up is new.
+        title={`${setup && setup.done < setup.steps.length ? "Welcome" : "Welcome back"}, ${firstName(profile.fullName)}`}
         description="Here's what's moving across your clients."
         actions={<AddClientDialog slug={slug} />}
       />

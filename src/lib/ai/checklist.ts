@@ -23,6 +23,7 @@ const schema = z.object({
       z.object({
         task: z.string().describe("One concrete change for the designer, in the imperative, under 15 words."),
         source: z.string().describe("The id of the note this change comes from, exactly as given."),
+        words: z.string().describe("The client's own words this task comes from: one sentence or phrase copied from that note exactly, character for character."),
       }),
     )
     .max(20),
@@ -30,7 +31,8 @@ const schema = z.object({
 
 /**
  * Turns a client's notes on one version into a to-do list for the designer.
- * The model only writes the tasks; every quote comes from the database, so nothing is put in the client's mouth.
+ * The model writes the tasks and points at the words each came from; a quote is shown only if those words
+ * really appear in the client's note, otherwise the whole note is quoted. Nothing is put in the client's mouth.
  */
 export async function draftChecklist(title: string, feedback: Feedback[]): Promise<{ items: ChecklistDraft; model: string }> {
   const byId = new Map(feedback.map((f) => [f.id, f]));
@@ -54,8 +56,21 @@ export async function draftChecklist(title: string, feedback: Feedback[]): Promi
 
   const items = output.items
     .filter((i) => byId.has(i.source) && i.task.trim())
-    .map((i) => ({ body: i.task.trim().slice(0, 300), commentId: commentIdOf(i.source), quote: byId.get(i.source)!.text.slice(0, 600) }));
+    .map((i) => ({ body: i.task.trim().slice(0, 300), commentId: commentIdOf(i.source), quote: exactQuote(byId.get(i.source)!.text, i.words) }));
   return { model: USE_GEMINI ? `google/${CHECKLIST_MODEL}` : CHECKLIST_MODEL, items };
+}
+
+/** The model's quote if it's genuinely in the note (ignoring spacing and case), else the whole note. */
+function exactQuote(note: string, words: string) {
+  const squash = (t: string) => t.replace(/\s+/g, " ").trim();
+  const quote = squash(words).replace(/^["'“”]+|["'“”]+$/g, "");
+  if (quote.length >= 3 && squash(note).toLowerCase().includes(quote.toLowerCase())) {
+    // Take the matching span from the note itself, so the client's own capitalisation survives.
+    const flat = squash(note);
+    const at = flat.toLowerCase().indexOf(quote.toLowerCase());
+    return flat.slice(at, at + quote.length).slice(0, 600);
+  }
+  return note.slice(0, 600);
 }
 
 function firstSentence(text: string) {
