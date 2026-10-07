@@ -2,7 +2,17 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDotsIcon, CaretLeftIcon, CheckCircleIcon, ClockIcon, FileArrowUpIcon, PencilLineIcon } from "@phosphor-icons/react/ssr";
+import {
+  ArrowsLeftRightIcon,
+  CalendarDotsIcon,
+  CaretLeftIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  FileArrowUpIcon,
+  PencilLineIcon,
+  PushPinIcon,
+  XIcon,
+} from "@phosphor-icons/react/ssr";
 import { cn } from "cn";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,12 +23,15 @@ import { FilePreview } from "@/components/deliverable/file-preview";
 import { StampOverlay } from "@/components/deliverable/stamp-overlay";
 import { ReviewPanel } from "@/components/deliverable/review-panel";
 import { TeamActions } from "@/components/deliverable/team-actions";
-import { CommentComposer, DeleteCommentButton } from "@/components/deliverable/comment-composer";
+import { CommentComposer, DeleteCommentButton, ResolveButton } from "@/components/deliverable/comment-composer";
+import { PinLayer, PinMark } from "@/components/deliverable/pin-layer";
+import { CompareSlider } from "@/components/deliverable/compare-slider";
 import { initials } from "@/components/initials";
 import { getWorkspaceContext } from "@/lib/data/workspace";
 import { ACCENT_SWATCH } from "@/lib/data/clients";
 import { getDeliverable } from "@/lib/data/deliverables";
-import { getComments } from "@/lib/data/comments";
+import { getComments, pinNumbers } from "@/lib/data/comments";
+import { previewKind } from "@/lib/uploads";
 import { createClient } from "@/lib/supabase/server";
 import { currentTime } from "@/lib/now";
 import { dueInfo, shortDate, timeAgo } from "@/lib/format";
@@ -52,19 +65,41 @@ async function Deliverable({
   const shown = d.versions.find((v) => v.version === requested) ?? latest;
   const isLatest = shown?.id === latest?.id;
 
+  const isImage = !!shown && previewKind(shown.mimeType) === "image";
+  // Compare wipes between two image versions; by default the one before the version shown.
+  const previous = shown ? d.versions.find((v) => v.version < shown.version && previewKind(v.mimeType) === "image") : undefined;
+  const against = isImage && query.compare ? d.versions.find((v) => v.version === Number(query.compare) && v.id !== shown!.id) : undefined;
+  const comparing = against && previewKind(against.mimeType) === "image" ? against : undefined;
+
   // Short-lived signed URLs from private storage. Storage RLS decides if this user may read the file.
   let viewUrl: string | null = null;
   let downloadUrl: string | null = null;
+  let compareUrl: string | null = null;
   if (shown) {
     const supabase = await createClient();
     const bucket = supabase.storage.from("deliverables");
-    const [view, download] = await Promise.all([
+    const [view, download, other] = await Promise.all([
       bucket.createSignedUrl(shown.storagePath, 60 * 60),
       bucket.createSignedUrl(shown.storagePath, 60 * 60, { download: shown.fileName }),
+      comparing ? bucket.createSignedUrl(comparing.storagePath, 60 * 60) : Promise.resolve(null),
     ]);
     viewUrl = view.data?.signedUrl ?? null;
     downloadUrl = download.data?.signedUrl ?? null;
+    compareUrl = other?.data?.signedUrl ?? null;
   }
+
+  const pinNo = pinNumbers(comments);
+  const pins = comments
+    .filter((c) => c.pin && c.versionId === shown?.id)
+    .map((c) => ({ id: c.id, n: pinNo.get(c.id)!, x: c.pin!.x, y: c.pin!.y, body: c.body, author: c.authorName, resolved: !!c.resolvedAt }));
+  // Open notes: unresolved client feedback and pins on the latest version, which the team works down to
+  // zero. Once the work is approved there's nothing left open.
+  const openNotes =
+    d.status === "approved"
+      ? 0
+      : comments.filter((c) => !c.deleted && !c.resolvedAt && c.versionId === latest?.id && (c.authorIsClient || c.pin)).length;
+  const base = `/w/${slug}/d/${d.id}`;
+  const shownQuery = shown && shown.id !== latest?.id ? `v=${shown.version}` : "";
 
   const due = d.status === "in_review" ? dueInfo(d.dueOn, now) : null;
   // The stamp sits on the exact version the client approved, not on later uploads.
@@ -124,47 +159,93 @@ async function Deliverable({
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0 space-y-6">
           {shown ? (
-            <section aria-label="File" className="space-y-3">
-              {d.versions.length > 1 && (
-                <nav aria-label="Versions" className="flex flex-wrap gap-1.5">
-                  {d.versions.map((v) => (
+            <section id="file" aria-label="File" className="scroll-mt-20 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                {d.versions.length > 1 ? (
+                  <nav aria-label="Versions" className="flex flex-wrap gap-1.5">
+                    {d.versions.map((v) => (
+                      <Link
+                        key={v.id}
+                        href={v.id === latest?.id ? `/w/${slug}/d/${d.id}` : `/w/${slug}/d/${d.id}?v=${v.version}`}
+                        scroll={false}
+                        aria-current={v.id === shown.id ? "page" : undefined}
+                        className={cn(
+                          "rounded-full border px-3 py-1 text-xs font-medium outline-none transition-colors tabular focus-visible:ring-3 focus-visible:ring-ring/50",
+                          v.id === shown.id ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted",
+                        )}
+                      >
+                        v{v.version}
+                        {v.id === latest?.id && <span className="ml-1 font-normal opacity-75">latest</span>}
+                      </Link>
+                    ))}
+                  </nav>
+                ) : (
+                  <span />
+                )}
+                <div className="flex items-center gap-3 text-sm">
+                  {isImage && !comparing && (
+                    <span className="hidden items-center gap-1.5 text-muted-foreground sm:inline-flex">
+                      <PushPinIcon className="size-4 text-pen" aria-hidden="true" />
+                      Click the work to pin a note
+                    </span>
+                  )}
+                  {isImage && previous && !comparing && (
                     <Link
-                      key={v.id}
-                      href={v.id === latest?.id ? `/w/${slug}/d/${d.id}` : `/w/${slug}/d/${d.id}?v=${v.version}`}
+                      href={`${base}?${shownQuery ? `${shownQuery}&` : ""}compare=${previous.version}`}
                       scroll={false}
-                      aria-current={v.id === shown.id ? "page" : undefined}
-                      className={cn(
-                        "rounded-full border px-3 py-1 text-xs font-medium outline-none transition-colors tabular focus-visible:ring-3 focus-visible:ring-ring/50",
-                        v.id === shown.id ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted",
-                      )}
+                      className="inline-flex items-center gap-1.5 rounded-full border bg-card px-3 py-1 text-xs font-semibold outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
                     >
-                      v{v.version}
-                      {v.id === latest?.id && <span className="ml-1 font-normal opacity-75">latest</span>}
+                      <ArrowsLeftRightIcon className="size-3.5" aria-hidden="true" />
+                      Compare with v{previous.version}
                     </Link>
-                  ))}
-                </nav>
+                  )}
+                  {comparing && (
+                    <Link
+                      href={shownQuery ? `${base}?${shownQuery}` : base}
+                      scroll={false}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white outline-none hover:bg-ink/85 focus-visible:ring-3 focus-visible:ring-ring/50"
+                    >
+                      <XIcon className="size-3.5" aria-hidden="true" />
+                      Stop comparing
+                    </Link>
+                  )}
+                </div>
+              </div>
+              {isImage && !comparing && (
+                <p className="text-sm text-muted-foreground sm:hidden">
+                  <PushPinIcon className="mr-1 inline size-4 text-pen" aria-hidden="true" />
+                  Tap the work to pin a note.
+                </p>
               )}
               {!isLatest && (
                 <p className="rounded-lg bg-status-changes/10 px-3 py-2 text-sm text-status-changes">
                   You&apos;re looking at version {shown.version}. The latest is version {latest?.version}.
                 </p>
               )}
-              <FilePreview
-                url={viewUrl}
-                downloadUrl={downloadUrl}
-                fileName={shown.fileName}
-                mimeType={shown.mimeType}
-                sizeBytes={shown.sizeBytes}
-                overlay={
-                  approval && (
-                    <StampOverlay
-                      version={shown.version}
-                      date={shortDate(approval.createdAt, now)}
-                      fresh={now - Date.parse(approval.createdAt) < 20_000}
-                    />
-                  )
-                }
-              />
+              {comparing && compareUrl && viewUrl ? (
+                <CompareSlider
+                  before={comparing.version < shown.version ? { url: compareUrl, label: `v${comparing.version}` } : { url: viewUrl, label: `v${shown.version}` }}
+                  after={comparing.version < shown.version ? { url: viewUrl, label: `v${shown.version}` } : { url: compareUrl, label: `v${comparing.version}` }}
+                />
+              ) : (
+                <FilePreview
+                  url={viewUrl}
+                  downloadUrl={downloadUrl}
+                  fileName={shown.fileName}
+                  mimeType={shown.mimeType}
+                  sizeBytes={shown.sizeBytes}
+                  pins={isImage && <PinLayer slug={slug} deliverableId={d.id} versionId={shown.id} pins={pins} canPin />}
+                  overlay={
+                    approval && (
+                      <StampOverlay
+                        version={shown.version}
+                        date={shortDate(approval.createdAt, now)}
+                        fresh={now - Date.parse(approval.createdAt) < 20_000}
+                      />
+                    )
+                  }
+                />
+              )}
               {shown.note && (
                 <p className="rounded-lg border bg-muted/30 px-3 py-2 text-sm">
                   <span className="font-medium">{shown.uploaderName}:</span> {shown.note}
@@ -186,13 +267,22 @@ async function Deliverable({
           <section aria-labelledby="comments-title" className="space-y-4">
             <h2 id="comments-title" className="font-semibold">
               Comments <span className="text-sm font-normal text-muted-foreground tabular">{comments.filter((c) => !c.deleted).length}</span>
+              {ws.isTeam && openNotes > 0 && (
+                <span className="ml-2 rounded-full bg-pen/10 px-2 py-0.5 text-xs font-semibold text-pen tabular">
+                  {openNotes} open {openNotes === 1 ? "note" : "notes"}
+                </span>
+              )}
             </h2>
             {comments.length === 0 && <p className="text-sm text-muted-foreground">No comments yet. Questions and feedback go here.</p>}
             <ol className="space-y-4">
               {comments.map((c) => {
                 const v = d.versions.find((x) => x.id === c.versionId);
                 return (
-                  <li key={c.id} className="flex gap-3">
+                  <li
+                    key={c.id}
+                    id={`comment-${c.id}`}
+                    className={cn("-mx-2 flex scroll-mt-24 gap-3 rounded-xl px-2 py-1 target:bg-process-yellow/35", c.resolvedAt && "opacity-70")}
+                  >
                     <Avatar className="size-8">
                       <AvatarFallback className={cn("text-[11px] font-semibold", c.authorIsClient ? "bg-status-review/12 text-status-review" : "bg-primary/10 text-primary")}>
                         {initials(c.authorName)}
@@ -206,15 +296,33 @@ async function Deliverable({
                           <time dateTime={c.createdAt}>{timeAgo(c.createdAt, now)}</time>
                         </span>
                         {v && <span className="text-xs text-muted-foreground tabular">on v{v.version}</span>}
+                        {c.resolvedAt && (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-status-approved">
+                            <CheckCircleIcon weight="fill" className="size-3.5" aria-hidden="true" />
+                            Resolved
+                          </span>
+                        )}
                       </p>
                       {c.deleted ? (
                         <p className="mt-1 text-sm text-muted-foreground italic">Comment deleted</p>
                       ) : (
-                        <p className="mt-1 text-sm whitespace-pre-line break-words">{c.body}</p>
+                        <p className="mt-1 flex gap-2 text-sm whitespace-pre-line break-words">
+                          {c.pin && pinNo.has(c.id) && (
+                            <a
+                              href={c.versionId === shown?.id ? "#file" : `${base}?v=${v?.version}`}
+                              aria-label={`Pin ${pinNo.get(c.id)} on v${v?.version}`}
+                              className="-mt-0.5 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                            >
+                              <PinMark n={pinNo.get(c.id)!} resolved={!!c.resolvedAt} small />
+                            </a>
+                          )}
+                          <span className="min-w-0">{c.body}</span>
+                        </p>
                       )}
-                      {!c.deleted && c.authorId === ws.userId && (
-                        <div className="mt-1">
-                          <DeleteCommentButton slug={slug} commentId={c.id} />
+                      {!c.deleted && (c.authorId === ws.userId || (ws.isTeam && (c.authorIsClient || c.pin))) && (
+                        <div className="mt-1 flex gap-3">
+                          {ws.isTeam && (c.authorIsClient || c.pin) && <ResolveButton slug={slug} commentId={c.id} resolved={!!c.resolvedAt} />}
+                          {c.authorId === ws.userId && <DeleteCommentButton slug={slug} commentId={c.id} />}
                         </div>
                       )}
                     </div>

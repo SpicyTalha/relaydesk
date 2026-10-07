@@ -11,13 +11,16 @@ export type CommentItem = {
   authorName: string;
   authorIsClient: boolean;
   versionId: string | null;
+  /** Where the note is pinned on its version's image, 0..1 of width and height. */
+  pin: { x: number; y: number } | null;
+  resolvedAt: string | null;
 };
 
 export async function getComments(workspaceId: string, deliverableId: string): Promise<CommentItem[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("comments")
-    .select("id, body, created_at, edited_at, deleted_at, author_id, version_id")
+    .select("id, body, created_at, edited_at, deleted_at, author_id, version_id, pin_x, pin_y, resolved_at")
     .eq("workspace_id", workspaceId)
     .eq("deliverable_id", deliverableId)
     .order("created_at", { ascending: true });
@@ -41,5 +44,20 @@ export async function getComments(workspaceId: string, deliverableId: string): P
     authorName: profiles?.find((p) => p.id === c.author_id)?.full_name || "Someone",
     authorIsClient: members?.find((m) => m.user_id === c.author_id)?.role === "client",
     versionId: c.version_id,
+    pin: c.pin_x !== null && c.pin_y !== null && !c.deleted_at ? { x: Number(c.pin_x), y: Number(c.pin_y) } : null,
+    resolvedAt: c.resolved_at,
   }));
+}
+
+/** Pins are numbered per version, in the order they were made: "pin 2 on v3". */
+export function pinNumbers(comments: CommentItem[]): Map<string, number> {
+  const counters = new Map<string, number>();
+  const numbers = new Map<string, number>();
+  for (const c of comments) {
+    if (!c.pin || !c.versionId) continue;
+    const n = (counters.get(c.versionId) ?? 0) + 1;
+    counters.set(c.versionId, n);
+    numbers.set(c.id, n);
+  }
+  return numbers;
 }

@@ -10,6 +10,7 @@ export function FilePreview({
   mimeType,
   sizeBytes,
   overlay,
+  pins,
 }: {
   url: string | null;
   downloadUrl: string | null;
@@ -18,6 +19,8 @@ export function FilePreview({
   sizeBytes: number;
   /** Laid on the proof itself, e.g. the approval stamp. */
   overlay?: React.ReactNode;
+  /** Laid exactly over an image, so pins line up with what they point at. */
+  pins?: React.ReactNode;
 }) {
   const kind = previewKind(mimeType);
   // Work is reviewed the way a studio would: a proof on the cutting mat. The checkerboard shows transparency.
@@ -38,8 +41,11 @@ export function FilePreview({
         <div className="mat grid place-items-center overflow-hidden rounded-xl px-4 py-6 sm:px-10 sm:py-10">
           <div className={paper}>
             {/* Signed, short-lived URL from private storage; next/image would cache it beyond its expiry. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt={fileName} className={`block max-h-[64vh] w-auto object-contain ${checker}`} />
+            <div className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt={fileName} className={`block max-h-[64vh] w-auto object-contain ${checker}`} />
+              {pins}
+            </div>
             {overlay}
           </div>
         </div>

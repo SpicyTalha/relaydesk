@@ -92,6 +92,92 @@ export type Database = {
           },
         ]
       }
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: number
+          metadata: Json
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: never
+          metadata?: Json
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: never
+          metadata?: Json
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_items: {
+        Row: {
+          body: string
+          checklist_id: string
+          comment_id: string | null
+          done_at: string | null
+          done_by: string | null
+          id: string
+          position: number
+          quote: string
+          workspace_id: string
+        }
+        Insert: {
+          body: string
+          checklist_id: string
+          comment_id?: string | null
+          done_at?: string | null
+          done_by?: string | null
+          id?: string
+          position: number
+          quote?: string
+          workspace_id: string
+        }
+        Update: {
+          body?: string
+          checklist_id?: string
+          comment_id?: string | null
+          done_at?: string | null
+          done_by?: string | null
+          id?: string
+          position?: number
+          quote?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_items_checklist_id_workspace_id_fkey"
+            columns: ["checklist_id", "workspace_id"]
+            isOneToOne: false
+            referencedRelation: "revision_checklists"
+            referencedColumns: ["id", "workspace_id"]
+          },
+          {
+            foreignKeyName: "checklist_items_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           accent: string
@@ -140,6 +226,10 @@ export type Database = {
           deliverable_id: string
           edited_at: string | null
           id: string
+          pin_x: number | null
+          pin_y: number | null
+          resolved_at: string | null
+          resolved_by: string | null
           version_id: string | null
           workspace_id: string
         }
@@ -152,6 +242,10 @@ export type Database = {
           deliverable_id: string
           edited_at?: string | null
           id?: string
+          pin_x?: number | null
+          pin_y?: number | null
+          resolved_at?: string | null
+          resolved_by?: string | null
           version_id?: string | null
           workspace_id: string
         }
@@ -164,6 +258,10 @@ export type Database = {
           deliverable_id?: string
           edited_at?: string | null
           id?: string
+          pin_x?: number | null
+          pin_y?: number | null
+          resolved_at?: string | null
+          resolved_by?: string | null
           version_id?: string | null
           workspace_id?: string
         }
@@ -431,6 +529,32 @@ export type Database = {
           },
         ]
       }
+      notification_reads: {
+        Row: {
+          seen_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          seen_at?: string
+          user_id?: string
+          workspace_id: string
+        }
+        Update: {
+          seen_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_reads_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -506,6 +630,54 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      revision_checklists: {
+        Row: {
+          client_id: string
+          created_at: string
+          created_by: string
+          deliverable_id: string
+          id: string
+          model: string
+          version_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          created_by?: string
+          deliverable_id: string
+          id?: string
+          model: string
+          version_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          created_by?: string
+          deliverable_id?: string
+          id?: string
+          model?: string
+          version_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revision_checklists_deliverable_id_workspace_id_client_id_fkey"
+            columns: ["deliverable_id", "workspace_id", "client_id"]
+            isOneToOne: false
+            referencedRelation: "deliverables"
+            referencedColumns: ["id", "workspace_id", "client_id"]
+          },
+          {
+            foreignKeyName: "revision_checklists_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "deliverable_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -700,6 +872,11 @@ export type Database = {
       }
       request_approval: {
         Args: { p_deliverable: string; p_due_on?: string }
+        Returns: undefined
+      }
+      seed_demo_pins: { Args: { p_workspace: string }; Returns: number }
+      set_comment_resolved: {
+        Args: { p_comment: string; p_resolved: boolean }
         Returns: undefined
       }
       submit_review: {

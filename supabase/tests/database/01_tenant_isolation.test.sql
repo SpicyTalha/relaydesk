@@ -66,8 +66,14 @@ insert into public.invitations (workspace_id, email, role, client_id, token_hash
 -- ---------------------------------------------------------------------------
 -- Fixture sanity
 -- ---------------------------------------------------------------------------
-select is((select count(*)::int from public.memberships where role = 'owner'), 2, 'workspace creation trigger made both owners');
-select is((select count(*)::int from public.profiles), 7, 'every auth user got a profile');
+-- Scoped to this file's fixtures, so leftover rows from local runs don't matter.
+select is((select count(*)::int from public.memberships where role = 'owner'
+           and workspace_id in ('a0000000-0000-0000-0000-000000000000', 'b0000000-0000-0000-0000-000000000000')), 2,
+          'workspace creation trigger made both owners');
+select is((select count(*)::int from public.profiles where id in (select id from auth.users where email in
+           ('olivia@atlas.test', 'marco@atlas.test', 'nadia@northwind.test', 'priya@pinecrest.test', 'ben@brightside.test',
+            'zoe@zenith.test', 'newhire@atlas.test'))), 7,
+          'every auth user got a profile');
 
 -- ---------------------------------------------------------------------------
 -- Anonymous visitors see nothing

@@ -69,6 +69,9 @@ export async function createSandbox(ipHash: string) {
     if (error) throw error;
     const result = data as { workspace_id: string; slug: string; northwind_client_id: string; copies: { template: string; path: string }[] };
 
+    const { error: pinError } = await admin.rpc("seed_demo_pins", { p_workspace: result.workspace_id });
+    if (pinError) throw pinError;
+
     // Server-side copies inside Storage: nothing is downloaded or re-uploaded.
     await Promise.all(
       result.copies.map(async (c) => {

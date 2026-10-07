@@ -1,13 +1,13 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { ArrowUpIcon } from "@phosphor-icons/react";
+import { ArrowCounterClockwiseIcon, ArrowUpIcon, CheckIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 import { Kbd } from "@/components/ui/kbd";
-import { addComment, deleteComment } from "@/lib/actions/comments";
+import { addComment, deleteComment, setCommentResolved } from "@/lib/actions/comments";
 
 export function CommentComposer({ slug, deliverableId, versionId }: { slug: string; deliverableId: string; versionId: string | null }) {
   const [body, setBody] = useState("");
@@ -73,6 +73,27 @@ export function DeleteCommentButton({ slug, commentId }: { slug: string; comment
       className="text-xs text-muted-foreground underline-offset-4 hover:text-destructive hover:underline disabled:opacity-50"
     >
       {pending ? "Deleting" : "Delete"}
+    </button>
+  );
+}
+
+/** The team ticks off feedback once it's handled, or reopens it. */
+export function ResolveButton({ slug, commentId, resolved }: { slug: string; commentId: string; resolved: boolean }) {
+  const [pending, startTransition] = useTransition();
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await setCommentResolved({ slug, commentId, resolved: !resolved });
+          if (!res.ok) toast.error(res.error);
+        })
+      }
+      className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline disabled:opacity-50"
+    >
+      {resolved ? <ArrowCounterClockwiseIcon className="size-3.5" aria-hidden="true" /> : <CheckIcon className="size-3.5" aria-hidden="true" />}
+      {pending ? "Saving" : resolved ? "Reopen" : "Resolve"}
     </button>
   );
 }
