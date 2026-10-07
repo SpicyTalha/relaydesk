@@ -6,9 +6,10 @@ const nextConfig: NextConfig = {
   // Keeps the dev badge out of screenshots captured from the dev server.
   devIndicators: false,
   experimental: {
-    // A restored build cache once shipped stale CSS (old fonts and tokens) to production.
-    // Correct output beats a faster build here.
+    // The on-disk Turbopack cache served stale CSS (old fonts and tokens) twice, in production
+    // and in dev, with the Tailwind loader rule below. Correct output beats faster restarts.
     turbopackFileSystemCacheForBuild: false,
+    turbopackFileSystemCacheForDev: false,
   },
   partialPrefetching: true,
   turbopack: {
