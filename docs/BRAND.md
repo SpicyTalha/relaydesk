@@ -6,7 +6,9 @@
 
 A B2B SaaS for small creative agencies (design-literate buyers who judge taste) and their non-technical clients (who open links on phones). The language is the print studio's sign-off: proofs, ink, the stamp that says a job can go to print. Confident and crafted, never cute.
 
-Dials (Taste skill): **marketing 8 / 6 / 4**, **app 5 / 3 / 6** (variance / motion / density).
+Dials (Taste skill): **marketing 9 / 7 / 5**, **app 5 / 3 / 6** (variance / motion / density).
+
+**Marketing direction: the proofing desk.** The page is a studio's desk the week a job goes to print: full-bleed process-colour fields (yellow, magenta, cyan), real proofs taped down at angles, a binder clip, and the client's red pen circling what's wrong and scribbling notes in the margin. The app stays calm; the marketing is where the brand gets loud.
 
 ## Name and voice
 
@@ -49,11 +51,24 @@ A round ink stamp in the approved green with "APPROVED" set around the ring, "OK
 | In review | `#2F6FEB` | Status only |
 | Changes | `#C97A0A` | Status only |
 
-Primary buttons are **ink**, not magenta. Magenta is rationed so it still means something.
+Primary buttons are **ink**, not magenta. In the app, magenta is rationed so it still means something.
+
+**Marketing-only print palette** (the desk):
+
+| Role | Hex | Use |
+|---|---|---|
+| Process yellow | `#FFE14A` | Hero field, pen notes on magenta |
+| Process magenta | `#D12D7F` | Client section field, top tape strip |
+| Process cyan | `#3CC3F2` | Final CTA field |
+| Red pen | `#E0312B` | Client markup only: circles, arrows, underlines, handwritten notes |
+
+Each colour gets a whole section, never a gradient. Halftone dots (`.halftone`) and masking tape (`.tape`) are the only textures.
 
 ## Type
 
 **Funnel Display** for headlines (tight tracking, -0.035em), **Funnel Sans** for everything else. Both are Google Fonts (OFL) loaded with `next/font`. Tabular figures for dates, counts, prices and versions. No monospace labels.
+
+**Caveat Brush** is the client's red pen, and only that: short lowercase notes in `text-pen` (`PenNote`). Never for headings, buttons or anything the studio says.
 
 ## Shape and depth
 
@@ -68,5 +83,7 @@ One radius scale: **10 px** controls, **14 px** panels, full pill only for statu
 **Firm and settled.** Things land like a stamp: a quick press, then still.
 
 - App: Motion for state changes only, 150-250 ms, no bounce except the stamp.
-- Marketing: one hero moment (the stamp lands on the real menu board) and one pinned scroll story (v1 → notes → v2 → approved) with GSAP + Lenis.
+- Marketing: one hero moment (proofs drop, the red pen circles the tiny prices, v3 lands, the stamp slams and the desk shakes) and one pinned scroll story (v1, red pen, v2, another note, v3 stamped) with GSAP DrawSVG + Lenis. Pen strokes draw like a marker; notes reveal left to right as if written.
+- Earlier versions fan out under later ones so every round of markup stays visible.
+- Components: `src/components/marketing/desk.tsx` (Proof, BinderClip, PenCircle, PenArrow, PenUnderline, PenNote, TapeMarquee).
 - Reduced motion always shows the final state.

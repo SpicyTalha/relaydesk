@@ -253,7 +253,7 @@ async function Deliverable({
                       <h.icon className="size-3" aria-hidden="true" />
                     </span>
                     <p className="text-sm leading-snug">{h.text}</p>
-                    {h.note && <p className="mt-1 border-l-2 pl-2 text-sm text-muted-foreground italic">&ldquo;{h.note}&rdquo;</p>}
+                    {h.note && <p className={cn("mt-1 border-l-2 pl-2 text-sm italic", h.markup ? "border-pen text-foreground/80" : "text-muted-foreground")}>&ldquo;{h.note}&rdquo;</p>}
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       <time dateTime={h.at} title={new Date(h.at).toUTCString()}>
                         {timeAgo(h.at, now)}
@@ -274,7 +274,7 @@ async function Deliverable({
   );
 }
 
-type HistoryEntry = { key: string; at: string; text: string; note?: string; icon: typeof ClockIcon; tone: string };
+type HistoryEntry = { key: string; at: string; text: string; note?: string; markup?: boolean; icon: typeof ClockIcon; tone: string };
 
 /** Uploads and decisions in one timeline, newest first: the written record clients and agencies both trust. */
 function buildHistory(d: Awaited<ReturnType<typeof getDeliverable>>): HistoryEntry[] {
@@ -290,7 +290,7 @@ function buildHistory(d: Awaited<ReturnType<typeof getDeliverable>>): HistoryEnt
       const version = d.versions.find((v) => v.id === r.versionId)?.version;
       return r.decision === "approved"
         ? { key: `r-${r.id}`, at: r.createdAt, text: `${r.reviewerName} approved version ${version}`, note: r.note || undefined, icon: CheckCircleIcon, tone: "bg-status-approved/15 text-status-approved" }
-        : { key: `r-${r.id}`, at: r.createdAt, text: `${r.reviewerName} requested changes on version ${version}`, note: r.note || undefined, icon: PencilLineIcon, tone: "bg-status-changes/15 text-status-changes" };
+        : { key: `r-${r.id}`, at: r.createdAt, text: `${r.reviewerName} requested changes on version ${version}`, note: r.note || undefined, markup: true, icon: PencilLineIcon, tone: "bg-status-changes/15 text-status-changes" };
     }),
   ];
   if (d.approvalRequestedAt && d.status === "in_review") {

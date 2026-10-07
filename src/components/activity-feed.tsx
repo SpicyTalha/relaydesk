@@ -69,7 +69,7 @@ export function ActivityFeed({
             <span className="min-w-0 flex-1 text-sm text-muted-foreground">
               <span className="block leading-snug">{describe(a)}</span>
               {typeof a.metadata.note === "string" && a.metadata.note && (
-                <span className="mt-1 line-clamp-2 block border-l-2 pl-2 text-[13px] italic">&ldquo;{a.metadata.note}&rdquo;</span>
+                <span className={cn("mt-1 line-clamp-2 block border-l-2 pl-2 text-[13px] italic", a.action === "changes.requested" && "border-pen text-foreground/80")}>&ldquo;{a.metadata.note}&rdquo;</span>
               )}
               <span className="mt-0.5 flex flex-wrap gap-x-2 text-xs">
                 {showClient && a.clientName && <span>{a.clientName}</span>}
