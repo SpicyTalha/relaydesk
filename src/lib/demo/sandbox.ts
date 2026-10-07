@@ -3,7 +3,8 @@ import { createHash, randomBytes } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const TEMPLATE_PREFIX = "demo-template";
-export const SANDBOXES_PER_IP_PER_HOUR = 5;
+/** Per network per hour. Production uses the default; local dev and CI raise it for tests. */
+export const SANDBOXES_PER_IP_PER_HOUR = Number(process.env.DEMO_SANDBOXES_PER_HOUR ?? 5);
 
 export const DEMO_PEOPLE = {
   owner: { key: "maya", name: "Maya Chen" },

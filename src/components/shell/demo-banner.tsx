@@ -5,7 +5,7 @@ import { switchDemoRole } from "@/app/demo/actions";
 export function DemoBanner({ slug, role }: { slug: string; role: "owner" | "member" | "client" }) {
   const isClient = role === "client";
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-primary px-4 py-1.5 text-center text-xs font-medium text-primary-foreground">
+    <div data-demo-banner className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-primary px-4 py-1.5 text-center text-xs font-medium text-primary-foreground">
       <span className="inline-flex items-center gap-1.5">
         <FlaskIcon className="size-3.5 shrink-0" aria-hidden="true" />
         Your private demo copy, viewed as {isClient ? "Daniel at Northwind Coffee (the client)" : "Maya at Kestrel Studio (the agency)"}. Deleted after a day.

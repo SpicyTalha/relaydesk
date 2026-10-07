@@ -24,7 +24,11 @@ export function ApprovalStamp({
   const ring = "APPROVED ✦ SIGNED OFF ✦ APPROVED ✦ SIGNED OFF ✦ ";
   const circumference = 2 * Math.PI * 71;
   return (
-    <svg viewBox="0 0 200 200" role="img" aria-label={title} className={cn("text-status-approved", className)}>
+    <svg
+      viewBox="0 0 200 200"
+      {...(title ? { role: "img", "aria-label": title } : { "aria-hidden": true })}
+      className={cn("text-status-approved", className)}
+    >
       <defs>
         <filter id={`ink-${id}`} x="-5%" y="-5%" width="110%" height="110%">
           <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed={seed} result="noise" />

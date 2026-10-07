@@ -48,3 +48,6 @@ next-env.d.ts
 # Render scratch files
 /demo/assets-src/.render-*
 !.env.example
+
+# Local scratch scripts
+/scripts/.*
