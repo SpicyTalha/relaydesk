@@ -11,8 +11,8 @@ test("full approval loop: agency sends work, client requests changes on a phone,
   // --- Agency: sign up and set up ------------------------------------------------
   await signUp(page, { name: "Maya Chen", email: ownerEmail });
   await expect(page).toHaveURL(/\/onboarding$/);
-  await page.getByLabel("Agency name").fill("Kestrel Studio");
-  await page.getByRole("button", { name: "Create workspace" }).click();
+  await page.getByLabel("Studio name").fill("Kestrel Studio");
+  await page.getByRole("button", { name: "Create studio" }).click();
   await expect(page).toHaveURL(/\/w\/kestrel-studio[a-z0-9-]*$/);
   const workspaceUrl = new URL(page.url()).pathname;
   await expect(page.getByRole("heading", { name: "Welcome, Maya" })).toBeVisible();
@@ -61,7 +61,7 @@ test("full approval loop: agency sends work, client requests changes on a phone,
   await client.getByRole("link", { name: "Create your account" }).click();
   await expect(client.getByLabel("Work email")).toHaveValue(clientEmail);
   await client.getByLabel("Your name").fill("Daniel Okafor");
-  await client.getByLabel("Password").fill("e2e-Relaydesk-2026!");
+  await client.getByLabel("Password", { exact: true }).fill("e2e-Relaydesk-2026!");
   await client.getByRole("button", { name: "Create account" }).click();
   await expect(client).toHaveURL(/\/invite\//);
   await client.getByRole("button", { name: "Accept invitation" }).click();

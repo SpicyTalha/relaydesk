@@ -7,6 +7,8 @@ import { WarningCircleIcon } from "@phosphor-icons/react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/auth/password-input";
+import { AUTH_BUTTON, AUTH_INPUT } from "@/components/auth/signup-steps";
 import { SubmitButton } from "@/components/submit-button";
 import { initialFormState } from "@/lib/form-state";
 import { signIn } from "../actions";
@@ -42,23 +44,29 @@ export function LoginForm() {
               required
               defaultValue={state.values?.email}
               aria-invalid={!!state.fieldErrors?.email}
+              className={AUTH_INPUT}
             />
             <FieldError errors={state.fieldErrors?.email?.map((message) => ({ message }))} />
           </Field>
           <Field data-invalid={!!state.fieldErrors?.password}>
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input
+            <div className="flex items-baseline justify-between gap-3">
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <Link href="/forgot-password" className="rounded-sm text-sm font-medium text-ink/65 underline-offset-4 outline-none hover:text-ink hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
+                Forgot password?
+              </Link>
+            </div>
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               autoComplete="current-password"
               required
               aria-invalid={!!state.fieldErrors?.password}
+              className={AUTH_INPUT}
             />
             <FieldError errors={state.fieldErrors?.password?.map((message) => ({ message }))} />
           </Field>
         </FieldGroup>
-        <SubmitButton className="w-full" size="lg" pendingText="Signing in">
+        <SubmitButton className={AUTH_BUTTON} size="lg" pendingText="Signing in">
           Sign in
         </SubmitButton>
       </form>
@@ -69,9 +77,9 @@ export function LoginForm() {
         New to Relaydesk?{" "}
         <Link
           href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"}
-          className="font-medium text-foreground underline-offset-4 hover:underline"
+          className="font-semibold text-foreground underline underline-offset-4 hover:text-ink/70"
         >
-          Create a workspace
+          Create your studio
         </Link>
       </p>
     </div>

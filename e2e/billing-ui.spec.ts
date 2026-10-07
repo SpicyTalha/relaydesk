@@ -5,8 +5,8 @@ test("owner sees plans and usage, and upgrading opens Stripe Checkout in test mo
   test.setTimeout(90_000);
   test.skip(!process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_"), "needs a Stripe test key");
   await signUp(page, { name: "Maya Chen", email: uniqueEmail("billing-ui") });
-  await page.getByLabel("Agency name").fill("Harbor Studio");
-  await page.getByRole("button", { name: "Create workspace" }).click();
+  await page.getByLabel("Studio name").fill("Harbor Studio");
+  await page.getByRole("button", { name: "Create studio" }).click();
   await expect(page).toHaveURL(/\/w\/harbor-studio[a-z0-9-]*$/);
 
   await page.getByRole("link", { name: "Billing" }).click();

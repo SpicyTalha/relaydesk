@@ -19,11 +19,14 @@ export async function createWorkspace(_prev: FormState, formData: FormData): Pro
 
   const supabase = await createClient();
   const base = slugify(parsed.data.name);
+  // Someone who picked a paid plan on the pricing page goes on to check out; everyone else starts on Free.
+  const plan = formData.get("plan");
+  const landing = (slug: string) => (plan === "pro" || plan === "studio" ? `/w/${slug}/billing?plan=${plan}` : `/w/${slug}`);
 
   // Try the clean slug first, then add a short suffix if another agency already has it.
   for (const slug of [base, `${base}-${randomSuffix()}`, `${base}-${randomSuffix(6)}`]) {
     const { error } = await supabase.from("workspaces").insert({ name: parsed.data.name, slug });
-    if (!error) redirect(`/w/${slug}`);
+    if (!error) redirect(landing(slug));
     if (error.code !== "23505") {
       return { error: "We couldn't create the workspace. Try again.", values };
     }

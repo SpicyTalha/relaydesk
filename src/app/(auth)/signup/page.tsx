@@ -3,22 +3,18 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SignupForm } from "./signup-form";
 
-export const metadata: Metadata = { title: "Create your workspace" };
+export const metadata: Metadata = { title: "Start your studio" };
 
 export default function SignupPage() {
   return (
-    <div className="space-y-6">
-      <div className="space-y-1.5">
-        <h1 className="text-2xl font-semibold tracking-tight">Start your workspace</h1>
-        <p className="text-sm text-muted-foreground">Free for 2 clients. No card needed.</p>
-      </div>
+    <div className="space-y-8">
       <Suspense
         fallback={
           <div className="space-y-4" aria-hidden="true">
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+            <Skeleton className="h-12 w-full rounded-full" />
           </div>
         }
       >

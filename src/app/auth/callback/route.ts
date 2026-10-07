@@ -14,5 +14,6 @@ export async function GET(request: NextRequest) {
     if (!error) return NextResponse.redirect(new URL(next, origin));
   }
 
-  return NextResponse.redirect(new URL("/login?error=link", origin));
+  // A bad password-reset link gets the reset page's own "expired" view, with a way to ask again.
+  return NextResponse.redirect(new URL(next === "/reset-password" ? next : "/login?error=link", origin));
 }

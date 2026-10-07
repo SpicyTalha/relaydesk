@@ -10,7 +10,7 @@ export async function signUp(page: Page, opts: { name: string; email: string; ne
   await page.goto(opts.next ? `/signup?next=${encodeURIComponent(opts.next)}` : "/signup");
   await page.getByLabel("Your name").fill(opts.name);
   await page.getByLabel("Work email").fill(opts.email);
-  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
   await page.getByRole("button", { name: "Create account" }).click();
 }
 

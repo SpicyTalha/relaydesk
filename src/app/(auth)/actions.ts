@@ -33,14 +33,17 @@ export async function signIn(_prev: FormState, formData: FormData): Promise<Form
   redirect(safeNext(formData.get("next")));
 }
 
+const password = z.string().min(8, "Use at least 8 characters.").max(72, "Use 72 characters or fewer.");
+
 const signUpSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your name.").max(80, "Keep it under 80 characters."),
   email: z.string().trim().toLowerCase().email("Enter a valid email address."),
-  password: z
-    .string()
-    .min(8, "Use at least 8 characters.")
-    .max(72, "Use 72 characters or fewer."),
+  password,
 });
+
+async function siteOrigin() {
+  return process.env.NEXT_PUBLIC_SITE_URL ?? `https://${(await headers()).get("host")}`;
+}
 
 export async function signUp(_prev: FormState, formData: FormData): Promise<FormState> {
   const values = { fullName: String(formData.get("fullName") ?? ""), email: String(formData.get("email") ?? "") };
@@ -48,7 +51,7 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (!parsed.success) return { fieldErrors: fieldErrorsOf(parsed.error), values };
 
   const next = safeNext(formData.get("next"), "/onboarding");
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? `https://${(await headers()).get("host")}`;
+  const origin = await siteOrigin();
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -78,8 +81,52 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   redirect(next);
 }
 
-export async function signOut() {
+export async function requestPasswordReset(_prev: FormState, formData: FormData): Promise<FormState> {
+  const values = { email: String(formData.get("email") ?? "") };
+  const parsed = z.object({ email: signInSchema.shape.email }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { fieldErrors: fieldErrorsOf(parsed.error), values };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${await siteOrigin()}/auth/callback?next=/reset-password`,
+  });
+  if (error?.status === 429) return { error: "Too many requests. Wait a minute and try again.", values };
+  if (error) console.error("Password reset email failed:", error.code ?? error.status);
+
+  // The same answer whether or not the account exists, so the form doesn't reveal who has one.
+  return {
+    success: `If there's an account for ${parsed.data.email}, a reset link is on its way. It works once and expires in an hour.`,
+    values,
+  };
+}
+
+export async function updatePassword(_prev: FormState, formData: FormData): Promise<FormState> {
+  const parsed = z.object({ password }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { fieldErrors: fieldErrorsOf(parsed.error) };
+
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  if (!data?.claims) return { error: "This reset link has expired. Ask for a new one." };
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) {
+    const message =
+      error.code === "same_password"
+        ? "That's your current password. Pick a new one."
+        : error.code === "weak_password"
+          ? "Pick a stronger password: longer, and not a common one."
+          : "We couldn't change your password. Try again.";
+    return { error: message };
+  }
+
+  // Anyone else signed in with the old password is signed out.
+  await supabase.auth.signOut({ scope: "others" });
+  redirect("/w");
+}
+
+export async function signOut(formData?: FormData) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  // An invite opened while signed in as someone else comes straight back to the invite.
+  redirect(safeNext(formData?.get("next"), "/login"));
 }

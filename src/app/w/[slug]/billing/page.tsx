@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { SignupSteps, parsePaidPlan } from "@/components/auth/signup-steps";
 import { ConfirmingPlan, ManageBillingButton, UpgradeButton } from "@/components/billing/plan-buttons";
 import { getWorkspaceContext } from "@/lib/data/workspace";
 import { getBilling } from "@/lib/data/billing";
@@ -48,6 +50,9 @@ async function Billing({
   const [now, { subscription, usage }] = await Promise.all([currentTime(), getBilling(ws.id)]);
   const current = planById(ws.plan);
   const hasSubscription = !!subscription && ["active", "trialing", "past_due"].includes(subscription.status);
+  // A paid plan picked on the pricing page during sign-up, still waiting for checkout.
+  const pickedId = parsePaidPlan(typeof query.plan === "string" ? query.plan : null);
+  const picked = pickedId && ws.plan === "free" && !hasSubscription && !query.checkout ? planById(pickedId) : null;
 
   const meters = [
     { label: "Client spaces", used: usage.clients, limit: current.limits.clients, format: String },
@@ -58,6 +63,36 @@ async function Billing({
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <PageHeader title="Billing" description="Plans, usage and invoices for this workspace." actions={hasSubscription && <ManageBillingButton slug={slug} />} />
+
+      {picked && (
+        <section aria-labelledby="finish-title" className="relative overflow-hidden rounded-2xl bg-process-yellow p-6 text-ink sm:p-8">
+          <div aria-hidden="true" className="halftone pointer-events-none absolute inset-0 text-ink/15" />
+          <div className="relative grid gap-6 md:grid-cols-[minmax(0,1fr)_16rem] md:items-end">
+            <div className="space-y-4">
+              <SignupSteps current={3} paid />
+              <h2 id="finish-title" className="font-display text-3xl leading-tight font-extrabold tracking-[-0.04em]">
+                One step left: switch on {picked.name}.
+              </h2>
+              <p className="max-w-lg text-ink/75">
+                ${picked.price} a month for {picked.features
+                  .slice(0, 3)
+                  .map((f) => f.charAt(0).toLowerCase() + f.slice(1))
+                  .join(", ")}. Your studio already works on Free, so you
+                can also do this later.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <UpgradeButton slug={slug} plan={picked.id as "pro" | "studio"} label={`Check out ${picked.name}`} />
+              <Link
+                href={`/w/${slug}`}
+                className="block rounded-md text-center text-sm font-semibold underline underline-offset-4 outline-none hover:text-ink/70 focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                Skip for now
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {query.checkout === "success" && <ConfirmingPlan confirmed={ws.plan !== "free"} planName={current.name} />}
       {query.checkout === "canceled" && (
@@ -138,7 +173,7 @@ async function Billing({
           {PLANS.map((p) => {
             const isCurrent = p.id === ws.plan;
             return (
-              <Card key={p.id} className={cn(isCurrent && "border-primary ring-1 ring-primary")}>
+              <Card key={p.id} className={cn(isCurrent && "border-primary ring-1 ring-primary", picked?.id === p.id && "ring-2 ring-process-magenta")}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     {p.name}

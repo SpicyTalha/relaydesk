@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { WarningCircleIcon } from "@phosphor-icons/react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SubmitButton } from "@/components/submit-button";
+import { AUTH_BUTTON } from "@/components/auth/signup-steps";
 import { initialFormState } from "@/lib/form-state";
 import { acceptInvitation } from "@/lib/actions/invitations";
 
@@ -18,7 +19,7 @@ export function AcceptInviteForm({ token }: { token: string }) {
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}
-      <SubmitButton size="lg" className="w-full" pendingText="Joining">
+      <SubmitButton size="lg" className={AUTH_BUTTON} pendingText="Joining">
         Accept invitation
       </SubmitButton>
     </form>
