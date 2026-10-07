@@ -1,0 +1,10 @@
+# Never upload local secrets or test output with a CLI deploy.
+.env*
+!.env.example
+e2e/.results
+e2e/.screens
+playwright-report
+supabase/.temp
+supabase/.branches
+demo/assets-src/.render-*
+.next

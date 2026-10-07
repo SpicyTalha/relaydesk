@@ -6,7 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test:db": "supabase test db",
+    "test:e2e": "playwright test",
+    "stripe:setup": "node --env-file=.env.local scripts/stripe-setup.mts",
+    "demo:render": "node scripts/render-demo-assets.mjs",
+    "demo:upload": "node --env-file=.env.local scripts/upload-demo-assets.mjs",
+    "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
@@ -29,13 +36,17 @@
   "devDependencies": {
     "@playwright/test": "1.63.0",
     "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
+    "@types/node": "^24.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vercel/config": "0.11.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@10.15.0"
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": "24.x"
+  }
 }
