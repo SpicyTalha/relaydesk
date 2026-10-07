@@ -3,6 +3,7 @@ import { signUp, uniqueEmail } from "./helpers";
 
 test("owner sees plans and usage, and upgrading opens Stripe Checkout in test mode", async ({ page }) => {
   test.setTimeout(90_000);
+  test.skip(!process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_"), "needs a Stripe test key");
   await signUp(page, { name: "Maya Chen", email: uniqueEmail("billing-ui") });
   await page.getByLabel("Agency name").fill("Harbor Studio");
   await page.getByRole("button", { name: "Create workspace" }).click();

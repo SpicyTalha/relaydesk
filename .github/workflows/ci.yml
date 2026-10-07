@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Typecheck and lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec next typegen
+      - run: pnpm typecheck
+      - run: pnpm lint --max-warnings=0
+
+  database:
+    name: Database security tests (pgTAP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with: { version: latest }
+      - run: supabase start -x realtime,analytics,vector,edge-runtime,imgproxy,logflare,studio
+      - run: supabase test db
+      - run: supabase db advisors --local
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    needs: [static]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - uses: supabase/setup-cli@v1
+        with: { version: latest }
+      - run: pnpm install --frozen-lockfile
+      - run: supabase start -x realtime,analytics,vector,edge-runtime,imgproxy,logflare,studio
+      - name: Local environment
+        run: |
+          supabase status -o env > .supabase.env
+          . ./.supabase.env
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLISHABLE_KEY"
+            echo "SUPABASE_SECRET_KEY=$SECRET_KEY"
+            echo "NEXT_PUBLIC_SITE_URL=http://localhost:3000"
+            echo "STRIPE_WEBHOOK_SECRET=whsec_ci_$(openssl rand -hex 16)"
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_TEST_SECRET_KEY }}"
+          } > .env.local
+      - run: node --env-file=.env.local scripts/upload-demo-assets.mjs
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      - run: pnpm start & npx --yes wait-on http://localhost:3000 --timeout 60000
+      - run: pnpm test:e2e
+        env: { E2E_BASE_URL: "http://localhost:3000" }
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: playwright-report, path: "playwright-report\ne2e/.results", retention-days: 7 }
