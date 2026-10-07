@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(18);
+select plan(20);
 
 -- A studio (owner, member, one client user) and an outsider with their own studio.
 insert into auth.users (id, email, aud, role) values
@@ -109,6 +109,22 @@ set local request.jwt.claims to '{"sub":"00000000-0000-0000-0000-0000000000c4"}'
 select throws_ok($$insert into public.notification_reads (workspace_id) values ('c0000000-0000-0000-0000-0000000000a1')$$,
   '42501', null, 'but only in studios they belong to');
 select is((select count(*)::int from public.notification_reads), 0, 'and nobody reads anyone else''s marks');
+
+reset role;
+
+-- ---- Suspension ---------------------------------------------------------------
+update public.workspaces set suspended_at = now() where id = 'c0000000-0000-0000-0000-0000000000a1';
+set local role authenticated;
+set local request.jwt.claims to '{"sub":"00000000-0000-0000-0000-0000000000c3"}';
+select throws_ok($$
+  insert into public.comments (deliverable_id, workspace_id, client_id, body)
+  values ('c0000000-0000-0000-0000-0000000000d1', 'c0000000-0000-0000-0000-0000000000a1', 'c0000000-0000-0000-0000-0000000000b1', 'Still there?')
+$$, 'P0001', null, 'a suspended studio takes no new writes');
+select is((select count(*)::int from public.deliverables), 1, 'but its work stays readable');
+reset role;
+
+set local role authenticated;
+set local request.jwt.claims to '{"sub":"00000000-0000-0000-0000-0000000000c4"}';
 
 -- ---- Audit log ----------------------------------------------------------------
 select throws_ok($$select count(*) from public.audit_log$$, '42501', null, 'the admin audit log is not reachable through the API');

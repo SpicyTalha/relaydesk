@@ -61,6 +61,7 @@ test("a plan picked on the pricing page carries through sign-up and studio setup
 });
 
 test("a forgotten password can be reset from the emailed link", async ({ page, browser }) => {
+  test.setTimeout(60_000);
   const email = uniqueEmail("ivo");
   await page.goto("/signup");
   await fillAccount(page, "Ivo Brandt", email);

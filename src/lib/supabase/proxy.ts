@@ -40,5 +40,13 @@ export async function updateSession(request: NextRequest) {
     return redirect;
   }
 
+  // The admin area answers a plain 404 to everyone but platform admins (app_metadata is server-set).
+  // The page checks again on its own; this just keeps it from admitting it exists.
+  if (signedIn && (pathname === "/admin" || pathname.startsWith("/admin/")) && data?.claims?.app_metadata?.platform_role !== "admin") {
+    const hidden = NextResponse.rewrite(new URL("/_not-found", request.url));
+    response.cookies.getAll().forEach((cookie) => hidden.cookies.set(cookie));
+    return hidden;
+  }
+
   return response;
 }

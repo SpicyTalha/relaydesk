@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TeamSidebar } from "@/components/shell/team-sidebar";
 import { UserMenu } from "@/components/shell/user-menu";
 import { DemoBanner } from "@/components/shell/demo-banner";
+import { SuspendedBanner } from "@/components/shell/suspended-banner";
 import { LogoMark } from "@/components/brand/logo";
 import { getProfile, getWorkspaceContext } from "@/lib/data/workspace";
 import { ACCENT_SWATCH, getClientSpaces } from "@/lib/data/clients";
@@ -35,6 +36,7 @@ async function Shell({ params, children }: { params: Promise<{ slug: string }>; 
     return (
       <div className="flex min-h-svh flex-col">
         {ws.isDemo && <DemoBanner slug={slug} role="client" />}
+        {ws.suspended && <SuspendedBanner />}
         <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
           <div className="mx-auto flex h-14 max-w-3xl items-center justify-between gap-4 px-4">
             <Link
@@ -77,6 +79,7 @@ async function Shell({ params, children }: { params: Promise<{ slug: string }>; 
       />
       <SidebarInset>
         {ws.isDemo && <DemoBanner slug={slug} role={ws.role} />}
+        {ws.suspended && <SuspendedBanner />}
         <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-background/85 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/70">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-1 h-5 md:hidden" />

@@ -4,7 +4,8 @@ async function openDemo(page: Page) {
   await page.goto("/login");
   await page.getByRole("button", { name: "As the agency" }).click();
   await expect(page).toHaveURL(/\/w\/kestrel-demo-[a-z0-9]+$/, { timeout: 30_000 });
-  await page.getByRole("link", { name: "Northwind Coffee" }).first().click();
+  await page.getByRole("link", { name: "Northwind Coffee" }).filter({ visible: true }).first().click();
+  await expect(page.getByRole("heading", { level: 1, name: "Northwind Coffee" })).toBeVisible();
 }
 
 test("the client pins a note on the work, and the studio resolves it", async ({ page }) => {
@@ -19,7 +20,7 @@ test("the client pins a note on the work, and the studio resolves it", async ({ 
   // As the client, on the post that's waiting for them.
   await page.getByRole("button", { name: "View as the client" }).click();
   await expect(page.getByRole("heading", { name: "Hi Daniel" })).toBeVisible({ timeout: 30_000 });
-  await page.getByRole("link", { name: /Instagram launch post/ }).first().click();
+  await page.getByRole("link", { name: /Instagram launch post/ }).filter({ visible: true }).first().click();
 
   const layer = page.getByTestId("pin-layer");
   await expect(layer).toBeVisible();
@@ -40,12 +41,13 @@ test("the client pins a note on the work, and the studio resolves it", async ({ 
   // Back as the studio: one open note, resolved with one click.
   await page.getByRole("button", { name: "View as the agency" }).click();
   await expect(page.getByRole("heading", { name: "Welcome back, Maya" })).toBeVisible({ timeout: 30_000 });
-  await page.getByRole("link", { name: "Northwind Coffee" }).first().click();
-  await page.getByRole("link", { name: /Instagram launch post/ }).first().click();
-  await expect(page.getByText("1 open note")).toBeVisible();
+  await page.getByRole("link", { name: "Northwind Coffee" }).filter({ visible: true }).first().click();
+  await expect(page.getByRole("heading", { level: 1, name: "Northwind Coffee" })).toBeVisible();
+  await page.getByRole("link", { name: /Instagram launch post/ }).filter({ visible: true }).first().click();
+  await expect(page.getByText("1 open note", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Resolve" }).last().click();
   await expect(page.getByRole("link", { name: "Pin 1, resolved: Can the headline sit a bit lower?" })).toBeVisible();
-  await expect(page.getByText("1 open note")).toHaveCount(0);
+  await expect(page.getByText("1 open note", { exact: true })).toHaveCount(0);
 });
 
 test("two versions can be compared with a slider", async ({ page }) => {
@@ -64,4 +66,24 @@ test("two versions can be compared with a slider", async ({ page }) => {
 
   await page.getByRole("link", { name: "Stop comparing" }).click();
   await expect(page.getByTestId("pin-layer")).toBeVisible();
+});
+
+test("the studio turns the client's notes into a checklist and ticks it off", async ({ page }) => {
+  test.setTimeout(90_000);
+  await openDemo(page);
+  await page.getByRole("link", { name: /^Loyalty card/ }).filter({ visible: true }).first().click();
+
+  const card = page.getByTestId("checklist-card");
+  await expect(card.getByText(/One click turns the \d+ open notes? on v1 into a to-do list/)).toBeVisible();
+  await card.getByRole("button", { name: "Make a checklist" }).click();
+
+  // Each item quotes the client, word for word, and links back to where they said it.
+  await expect(card.getByText(/Can the stamp circles be bigger\?/).first()).toBeVisible();
+  await expect(card.getByText(/^0 of \d+ done$/)).toBeVisible();
+  await expect(card.getByText(/2 of 3 left this month/)).toBeVisible();
+
+  await card.getByRole("checkbox").first().click();
+  await expect(card.getByText(/^1 of \d+ done$/)).toBeVisible();
+  await page.reload();
+  await expect(card.getByText(/^1 of \d+ done$/)).toBeVisible();
 });

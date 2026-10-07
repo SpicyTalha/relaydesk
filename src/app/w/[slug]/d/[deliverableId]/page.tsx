@@ -26,6 +26,8 @@ import { TeamActions } from "@/components/deliverable/team-actions";
 import { CommentComposer, DeleteCommentButton, ResolveButton } from "@/components/deliverable/comment-composer";
 import { PinLayer, PinMark } from "@/components/deliverable/pin-layer";
 import { CompareSlider } from "@/components/deliverable/compare-slider";
+import { ChecklistCard } from "@/components/deliverable/checklist-card";
+import { aiAllowance, getLatestChecklist } from "@/lib/data/checklists";
 import { initials } from "@/components/initials";
 import { getWorkspaceContext } from "@/lib/data/workspace";
 import { ACCENT_SWATCH } from "@/lib/data/clients";
@@ -57,7 +59,13 @@ async function Deliverable({
   if (!/^[0-9a-f-]{36}$/i.test(deliverableId)) notFound();
 
   const ws = await getWorkspaceContext(slug);
-  const [now, d, comments] = await Promise.all([currentTime(), getDeliverable(ws.id, deliverableId), getComments(ws.id, deliverableId)]);
+  const [now, d, comments, checklist, allowance] = await Promise.all([
+    currentTime(),
+    getDeliverable(ws.id, deliverableId),
+    getComments(ws.id, deliverableId),
+    ws.isTeam ? getLatestChecklist(ws.id, deliverableId) : Promise.resolve(null),
+    ws.isTeam ? aiAllowance(ws) : Promise.resolve({ limit: 0, used: 0, left: 0 }),
+  ]);
 
   const audience = ws.isTeam ? "team" : "client";
   const latest = d.versions[0] ?? null;
@@ -97,7 +105,8 @@ async function Deliverable({
   const openNotes =
     d.status === "approved"
       ? 0
-      : comments.filter((c) => !c.deleted && !c.resolvedAt && c.versionId === latest?.id && (c.authorIsClient || c.pin)).length;
+      : comments.filter((c) => !c.deleted && !c.resolvedAt && c.versionId === latest?.id && (c.authorIsClient || c.pin)).length +
+        d.reviews.filter((r) => r.decision === "changes_requested" && r.versionId === latest?.id && r.note?.trim()).length;
   const base = `/w/${slug}/d/${d.id}`;
   const shownQuery = shown && shown.id !== latest?.id ? `v=${shown.version}` : "";
 
@@ -335,6 +344,19 @@ async function Deliverable({
         </div>
 
         <aside className="space-y-6">
+          {ws.isTeam && latest && (
+            <ChecklistCard
+              slug={slug}
+              deliverableId={d.id}
+              checklist={checklist}
+              checklistVersion={checklist ? (d.versions.find((v) => v.id === checklist.versionId)?.version ?? null) : null}
+              latestVersion={latest.version}
+              openNotes={openNotes}
+              allowance={allowance}
+              pins={Object.fromEntries(pinNo)}
+              billingHref={ws.isOwner ? `/w/${slug}/billing` : null}
+            />
+          )}
           {clientCanDecide && latest && (
             <Card className="hidden gap-3 lg:flex">
               <CardHeader>
