@@ -54,3 +54,7 @@ next-env.d.ts
 
 # Launch video working files (frames, stems); the finished video is copied to gallery/out
 /brag-output/
+
+# Talha's raw recordings and photo for the gig video (personal, never public)
+/gallery/talha/
+/gallery/work/

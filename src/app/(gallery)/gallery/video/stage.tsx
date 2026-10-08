@@ -18,14 +18,14 @@ import phone from "../../../../../public/screens/client-approve-phone.png";
  * and screenshots the stage; nothing here uses CSS transitions or timers.
  */
 
-const clamp = (v: number) => Math.min(1, Math.max(0, v));
-const seg = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
-const out = (p: number) => 1 - Math.pow(1 - p, 3);
-const back = (p: number) => 1 + 2.4 * Math.pow(p - 1, 3) + 1.4 * Math.pow(p - 1, 2);
-const lerp = (a: number, b: number, p: number) => a + (b - a) * p;
+export const clamp = (v: number) => Math.min(1, Math.max(0, v));
+export const seg = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
+export const out = (p: number) => 1 - Math.pow(1 - p, 3);
+export const back = (p: number) => 1 + 2.4 * Math.pow(p - 1, 3) + 1.4 * Math.pow(p - 1, 2);
+export const lerp = (a: number, b: number, p: number) => a + (b - a) * p;
 
 /** Something entering: fades and rises in over [a, a+d], leaves over [z-d, z]. */
-function enter(t: number, a: number, z = 99, d = 0.35, dy = 40) {
+export function enter(t: number, a: number, z = 99, d = 0.35, dy = 40) {
   const i = out(seg(t, a, a + d));
   const o = out(seg(t, z - d, z));
   return { opacity: i * (1 - o), transform: `translateY(${(1 - i) * dy - o * dy}px)` } as const;
@@ -117,7 +117,7 @@ function Caption({ t, a, z, children }: { t: number; a: number; z: number; child
   );
 }
 
-function Desk({ t }: { t: number }) {
+export function Desk({ t }: { t: number }) {
   const intro = out(seg(t, 3.2, 3.6));
   // Scene 2: logo reveal.
   const logo = back(seg(t, 3.35, 3.85));
