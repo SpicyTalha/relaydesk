@@ -10,14 +10,16 @@ const base = process.argv[2] ?? "http://localhost:3000";
 mkdirSync("gallery/out", { recursive: true });
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 769 }, deviceScaleFactor: 2 });
-for (const n of [1, 2, 3]) {
+for (const n of [1, 2, 3, 4]) {
+  await page.setViewportSize(n === 4 ? { width: 1024, height: 768 } : { width: 1280, height: 769 });
   await page.goto(`${base}/gallery/${n}`, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
   // Next's development badges are not part of the picture.
   await page.addStyleTag({ content: "nextjs-portal { display: none !important; }" });
   await page.waitForTimeout(500);
-  await page.locator("[data-frame]").screenshot({ path: `gallery/out/relaydesk-0${n}.jpg`, type: "jpeg", quality: 92 });
-  console.log(`gallery/out/relaydesk-0${n}.jpg`);
+  const file = n === 4 ? "gallery/out/relaydesk-portfolio-cover.jpg" : `gallery/out/relaydesk-0${n}.jpg`;
+  await page.locator("[data-frame]").screenshot({ path: file, type: "jpeg", quality: 92 });
+  console.log(file);
 }
 
 // The two gallery PDFs: the Blueprint (a sample of the Basic package) and the case study.

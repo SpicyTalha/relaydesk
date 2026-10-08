@@ -18,16 +18,17 @@ import checklist from "../../../../../gallery/shots/checklist.png";
 export const metadata: Metadata = { title: "Gallery", robots: { index: false } };
 
 export function generateStaticParams() {
-  return [{ frame: "1" }, { frame: "2" }, { frame: "3" }];
+  return [{ frame: "1" }, { frame: "2" }, { frame: "3" }, { frame: "4" }];
 }
 
 export default async function GalleryFrame({ params }: PageProps<"/gallery/[frame]">) {
   if (process.env.NODE_ENV === "production") notFound();
   const { frame } = await params;
-  const Frame = { "1": Cover, "2": Features, "3": Quality }[frame];
+  const Frame = { "1": Cover, "2": Features, "3": Quality, "4": PortfolioCover }[frame];
   if (!Frame) notFound();
+  // Frame 4 is the 4:3 thumbnail Fiverr's portfolio asks for; the rest are gig gallery images.
   return (
-    <div data-frame className="relative h-[769px] w-[1280px] overflow-hidden">
+    <div data-frame className={frame === "4" ? "relative h-[768px] w-[1024px] overflow-hidden" : "relative h-[769px] w-[1280px] overflow-hidden"}>
       <Frame />
     </div>
   );
@@ -132,6 +133,28 @@ function Quality() {
         <div className="absolute -right-10 -bottom-12 size-40 -rotate-[16deg]">
           <ApprovalStamp version={1} date="Oct 14" seed={13} title="" />
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PortfolioCover() {
+  return (
+    <div className="relative size-full bg-process-yellow text-ink">
+      <div aria-hidden="true" className="halftone absolute inset-0 text-ink/20 [mask-image:linear-gradient(to_bottom,transparent,black_45%,transparent)]" />
+      <div className="absolute top-[56px] left-[60px] w-[520px]">
+        <Logo className="origin-left scale-125" />
+        <h1 className="mt-8 font-display text-[78px] leading-[0.88] font-extrabold tracking-[-0.055em]">Client approval portal.</h1>
+        <p className="mt-5 text-[23px] leading-snug font-medium">Clients approve or mark up work from their phone. A full SaaS MVP.</p>
+      </div>
+      <div className="absolute top-[350px] left-[40px] h-[420px] w-[1000px]">
+        <Proof src={overview} className="top-[20px] left-[300px] w-[680px] rotate-[3deg]" tape="corners" sizes="1400px" />
+        <div className="absolute top-[0px] left-[110px] w-[210px] -rotate-[6deg] overflow-hidden rounded-[2rem] border-[7px] border-ink bg-ink shadow-[0_40px_60px_-25px_rgb(0_0_0/0.55)]">
+          <Image src={phone} alt="" sizes="450px" />
+        </div>
+      </div>
+      <div className="absolute top-[70px] right-[70px] size-[230px] -rotate-[12deg]">
+        <ApprovalStamp version={3} date="Oct 14" seed={11} title="" />
       </div>
     </div>
   );
